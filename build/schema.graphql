@@ -1,0 +1,11 @@
+type ExampleEntity @entity {
+  id: ID!
+  count: BigInt!
+  owner: Bytes! # address
+  spender: Bytes! # address
+  addedName: String!
+}
+
+# type TokenSet @entity {
+
+# }
