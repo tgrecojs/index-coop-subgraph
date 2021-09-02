@@ -16,9 +16,12 @@
 [https://etherscan.io/address/0x08f866c74205617b6f3903ef481798eced10cdec#readContract]
 ### Base Fee Adapter
 
-## Start Blocks
+# Start Blocks
 * ETH2xFLI
   * 12035541
+* BTC2x-FLI
+* DPI
+* MVI
 
 
 ## Components (Assets)
