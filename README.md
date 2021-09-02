@@ -1,19 +1,17 @@
-# Index Coop Products Subgraph
-* Minting
-* Redeeming
-* Rebelancing
-* Debt Issuance
-* DEX Exchanges
+# Index Coop Subgraph
+### Important data points
+* Fee Accruel
+  * Streaming Fee
+  * Rebalance Rewards Accrual
+  * Methodologist Fee
 
 
 ## Fee Modules
 ### Fee Split Module
-* Occurs once a month.
+* Contract responsible for paying partnership % fees. AFAIK this occurs once a month.
 * [FeeSplitAdapter Contract](https://etherscan.io/address/0x26f81381018543eca9353bd081387f68fae15ced)
 
-### Events
-* Fee Accruel 
-* Transfering Fees 
+ 
 ### Streaming Fee Module
 [https://etherscan.io/address/0x08f866c74205617b6f3903ef481798eced10cdec#readContract]
 ### Base Fee Adapter
@@ -47,19 +45,17 @@ Array of underlying assets making up a tokenset
   * Change Methodologist
 
 
-# Events
-
-
+# Entities
 ```graphql
 
-type LeverageModule {
+type LeverageModule @entity {
   id: ID!
   currentLeverageRatio: int!
   newLeverageRatio: 
   manager: [Manager!]! @derivedFrom(field: manager)
 }
 
-type RebalanceEvent {
+type RebalanceEvent @entity {
   id: !ID
   currentLeverageRatio: int!
   newLeverageRatio: int!
@@ -67,7 +63,8 @@ type RebalanceEvent {
   leverageModule: [leverageModule!]! @derivedFrom(field: leverageModule)
 }
 
-type Adapter {
+
+type Adapter @entity {
   id: ID!
   address: Bytes!
   manager: [Manager!]! @derivedFrom(field: manager)
@@ -77,7 +74,7 @@ type Adapter {
 }
 
 
-type Module {
+type Module @entity {
   id: ID!
   date: Int!
   gasUsed: Int!
@@ -85,7 +82,7 @@ type Module {
   leverageModule
 }
 
-type Component {
+type Component @entity {
     id: ID!
     address: Bytes! # USDC addrress
     name: String! # USDC
@@ -93,21 +90,23 @@ type Component {
     setToken: @derivedFrom(field: setToken)
 }
 
-type FeeModule {
+type FeeModule @entity {
   id: !ID
   name: String!
   address: Bytes!
+  manager: Manager!
+  streamingFee
   streaming: Int!
 }
 
-type Manager {
+type Manager @entity {
   id: ID!
   address: Bytes!
   adapters: [Adapter!]
   methodologist: 
 }
 
-type SetToken {
+type SetToken @entity {
   id: ID!
   date: Int!
   name: String!

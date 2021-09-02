@@ -1,4 +1,4 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import { BigInt, Entity } from "@graphprotocol/graph-ts"
 import {
   Eth2xFli,
   Approval,
@@ -20,15 +20,23 @@ import {
 } from "../generated/Eth2xFli/Eth2xFli"
 import { ExampleEntity } from "../generated/schema"
 
+// class TokenData extends Eth2xFli {
+//   constructor(call, address) {
+//     super(call, address)
+//     console.log(this)
+//   }
+
+// }
+
 export function handleApproval(event: Approval): void {
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
   let entity = ExampleEntity.load(event.transaction.from.toHex())
-
   // Entities only exist after they have been saved to the store;
   // `null` checks allow to create entities on demand
   if (entity == null) {
     entity = new ExampleEntity(event.transaction.from.toHex())
+    entity.addedName = "thomas";
 
     // Entity fields can be set using simple assignments
     entity.count = BigInt.fromI32(0)
@@ -42,13 +50,13 @@ export function handleApproval(event: Approval): void {
   entity.spender = event.params.spender
 
   // Entities can be written to the store with `.save()`
-  entity.save()
 
   // Note: If a handler doesn't require existing field values, it is faster
   // _not_ to load the entity from the store. Instead, create it fresh with
   // `new Entity(...)`, set the fields that should be updated and save the
   // entity back to the store. Fields that were not set or unset remain
   // unchanged, allowing for partial updates to be applied.
+
 
   // It is also possible to access smart contracts from mappings. For
   // example, the contract that has emitted the event can be connected to
@@ -93,42 +101,42 @@ export function handleApproval(event: Approval): void {
   // - contract.transferFrom(...)
 }
 
-export function handleComponentAdded(event: ComponentAdded): void {}
+export function handleComponentAdded(event: ComponentAdded): void { }
 
-export function handleComponentRemoved(event: ComponentRemoved): void {}
+export function handleComponentRemoved(event: ComponentRemoved): void { }
 
 export function handleDefaultPositionUnitEdited(
   event: DefaultPositionUnitEdited
-): void {}
+): void { }
 
 export function handleExternalPositionDataEdited(
   event: ExternalPositionDataEdited
-): void {}
+): void { }
 
 export function handleExternalPositionUnitEdited(
   event: ExternalPositionUnitEdited
-): void {}
+): void { }
 
-export function handleInvoked(event: Invoked): void {}
+export function handleInvoked(event: Invoked): void { }
 
-export function handleManagerEdited(event: ManagerEdited): void {}
+export function handleManagerEdited(event: ManagerEdited): void { }
 
-export function handleModuleAdded(event: ModuleAdded): void {}
+export function handleModuleAdded(event: ModuleAdded): void { }
 
-export function handleModuleInitialized(event: ModuleInitialized): void {}
+export function handleModuleInitialized(event: ModuleInitialized): void { }
 
-export function handleModuleRemoved(event: ModuleRemoved): void {}
+export function handleModuleRemoved(event: ModuleRemoved): void { }
 
-export function handlePendingModuleRemoved(event: PendingModuleRemoved): void {}
+export function handlePendingModuleRemoved(event: PendingModuleRemoved): void { }
 
-export function handlePositionModuleAdded(event: PositionModuleAdded): void {}
+export function handlePositionModuleAdded(event: PositionModuleAdded): void { }
 
 export function handlePositionModuleRemoved(
   event: PositionModuleRemoved
-): void {}
+): void { }
 
 export function handlePositionMultiplierEdited(
   event: PositionMultiplierEdited
-): void {}
+): void { }
 
-export function handleTransfer(event: Transfer): void {}
+export function handleTransfer(event: Transfer): void { }

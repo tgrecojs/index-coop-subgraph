@@ -3,4 +3,9 @@ type ExampleEntity @entity {
   count: BigInt!
   owner: Bytes! # address
   spender: Bytes! # address
+  addedName: String!
 }
+
+# type TokenSet @entity {
+
+# }

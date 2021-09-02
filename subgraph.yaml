@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
@@ -8,9 +8,10 @@ dataSources:
     source:
       address: "0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd"
       abi: Eth2xFli
+      startBlock: 12035541
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.2
+      apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
         - Approval
