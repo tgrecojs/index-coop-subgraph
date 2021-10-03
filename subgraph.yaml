@@ -3,11 +3,11 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: Eth2xFli
+    name: SetToken
     network: mainnet
     source:
       address: "0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd"
-      abi: Eth2xFli
+      abi: SetToken
       startBlock: 12035541
     mapping:
       kind: ethereum/events
@@ -31,7 +31,7 @@ dataSources:
         - PositionMultiplierEdited
         - Transfer
       abis:
-        - name: Eth2xFli
+        - name: SetToken
           file: ./abis/Eth2xFli.json
       eventHandlers:
         - event: Approval(indexed address,indexed address,uint256)
@@ -66,4 +66,107 @@ dataSources:
           handler: handlePositionMultiplierEdited
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: FlexibleLeverageStrategyAdapter
+    network: mainnet
+    source:
+      address: "0x1335d01a4b572c37f800f45d9a4b36a53a898a9b"
+      abi: FlexibleLeverageStrategyAdapter
+      startBlock: 12035541
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - AnyoneCallableUpdated
+        - CallerStatusUpdated
+        - Disengaged
+        - Engaged
+        - ExecutionSettingsUpdated
+        - IncentiveSettingsUpdated
+        - MethodologySettingsUpdated
+        - RebalanceIterated
+        - Rebalanced
+        - RipcordCalled
+      abis:
+        - name: FlexibleLeverageStrategyAdapter
+          file: ./abis/FlexibleLeverageStrategyAdapter.json
+      eventHandlers:
+        - event: AnyoneCallableUpdated(indexed bool)
+          handler: handleAnyoneCallableUpdated
+        - event: CallerStatusUpdated(indexed address,bool)
+          handler: handleCallerStatusUpdated
+        - event: Disengaged(uint256,uint256,uint256,uint256)
+          handler: handleDisengaged
+        - event: Engaged(uint256,uint256,uint256,uint256)
+          handler: handleEngaged
+        - event: ExecutionSettingsUpdated(uint256,uint256,uint256,uint256,string,bytes)
+          handler: handleExecutionSettingsUpdated
+        - event: IncentiveSettingsUpdated(uint256,uint256,uint256,uint256,uint256)
+          handler: handleIncentiveSettingsUpdated
+        - event: MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)
+          handler: handleMethodologySettingsUpdated
+        - event: RebalanceIterated(uint256,uint256,uint256,uint256)
+          handler: handleRebalanceIterated
+        - event: Rebalanced(uint256,uint256,uint256,uint256)
+          handler: handleRebalanced
+        - event: RipcordCalled(uint256,uint256,uint256,uint256)
+          handler: handleRipcordCalled
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    network: mainnet
+    name: FlexibleLeverageStrategyExtension
+    source:
+      abi: FlexibleLeverageStrategyExtension
+      address: "0xf6ba6441d4dac647898f4083483aa44da8b1446f"
+      startBlock: 12743477 
+    mapping:
+      kind: ethereum/events
+      language: wasm/assemblyscript
+      abis:
+        - file: ./abis/FlexibleLeverageStrategyExtension.json
+          name: FlexibleLeverageStrategyExtension
+      apiVersion: 0.0.4
+      entities:
+        - AnyoneCallableUpdated
+        - CallerStatusUpdated
+        - Disengaged
+        - Engaged
+        - ExchangeAdded
+        - ExchangeRemoved
+        - ExchangeUpdated
+        - ExecutionSettingsUpdated
+        - IncentiveSettingsUpdated
+        - MethodologySettingsUpdated
+        - RebalanceIterated
+        - Rebalanced
+        - RipcordCalled
+      eventHandlers:
+        - event: AnyoneCallableUpdated(indexed bool)
+          handler: handleAnyoneCallableUpdated
+        - event: 'CallerStatusUpdated(indexed address,bool)'
+          handler: handleCallerStatusUpdated
+        - event: 'Disengaged(uint256,uint256,uint256,uint256)'
+          handler: handleDisengaged
+        - event: 'Engaged(uint256,uint256,uint256,uint256)'
+          handler: handleEngaged
+        - event: 'ExchangeAdded(string,uint256,uint256,uint256,bytes,bytes)'
+          handler: handleExchangeAdded
+        - event: ExchangeRemoved(string)
+          handler: handleExchangeRemoved
+        - event: 'ExchangeUpdated(string,uint256,uint256,uint256,bytes,bytes)'
+          handler: handleExchangeUpdated
+        - event: 'ExecutionSettingsUpdated(uint256,uint256,uint256)'
+          handler: handleExecutionSettingsUpdated
+        - event: 'IncentiveSettingsUpdated(uint256,uint256,uint256,uint256)'
+          handler: handleIncentiveSettingsUpdated
+        - event: 'MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)'
+          handler: handleMethodologySettingsUpdated
+        - event: 'RebalanceIterated(uint256,uint256,uint256,uint256)'
+          handler: handleRebalanceIterated
+        - event: 'Rebalanced(uint256,uint256,uint256,uint256)'
+          handler: handleRebalanced
+        - event: 'RipcordCalled(uint256,uint256,uint256,uint256)'
+          handler: handleRipcordCalled
       file: ./src/mapping.ts
