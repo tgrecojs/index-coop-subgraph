@@ -1,0 +1,50 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: FlexibleLeverageStrategyAdapter
+    network: mainnet
+    source:
+      address: "0x1335d01a4b572c37f800f45d9a4b36a53a898a9b"
+      abi: FlexibleLeverageStrategyAdapter
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.2
+      language: wasm/assemblyscript
+      entities:
+        - AnyoneCallableUpdated
+        - CallerStatusUpdated
+        - Disengaged
+        - Engaged
+        - ExecutionSettingsUpdated
+        - IncentiveSettingsUpdated
+        - MethodologySettingsUpdated
+        - RebalanceIterated
+        - Rebalanced
+        - RipcordCalled
+      abis:
+        - name: FlexibleLeverageStrategyAdapter
+          file: ./abis/FlexibleLeverageStrategyAdapter.json
+      eventHandlers:
+        - event: AnyoneCallableUpdated(indexed bool)
+          handler: handleAnyoneCallableUpdated
+        - event: CallerStatusUpdated(indexed address,bool)
+          handler: handleCallerStatusUpdated
+        - event: Disengaged(uint256,uint256,uint256,uint256)
+          handler: handleDisengaged
+        - event: Engaged(uint256,uint256,uint256,uint256)
+          handler: handleEngaged
+        - event: ExecutionSettingsUpdated(uint256,uint256,uint256,uint256,string,bytes)
+          handler: handleExecutionSettingsUpdated
+        - event: IncentiveSettingsUpdated(uint256,uint256,uint256,uint256,uint256)
+          handler: handleIncentiveSettingsUpdated
+        - event: MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)
+          handler: handleMethodologySettingsUpdated
+        - event: RebalanceIterated(uint256,uint256,uint256,uint256)
+          handler: handleRebalanceIterated
+        - event: Rebalanced(uint256,uint256,uint256,uint256)
+          handler: handleRebalanced
+        - event: RipcordCalled(uint256,uint256,uint256,uint256)
+          handler: handleRipcordCalled
+      file: ./src/mapping.ts

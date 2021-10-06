@@ -1,0 +1,78 @@
+type AnyoneCallableUpdated @entity {
+  id: ID!
+  _status: Boolean! # bool
+}
+
+type CallerStatusUpdated @entity {
+  id: ID!
+  _caller: Bytes! # address
+  _status: Boolean! # bool
+}
+
+type Disengaged @entity {
+  id: ID!
+  _currentLeverageRatio: BigInt! # uint256
+  _newLeverageRatio: BigInt! # uint256
+  _chunkRebalanceNotional: BigInt! # uint256
+  _totalRebalanceNotional: BigInt! # uint256
+}
+
+type Engaged @entity {
+  id: ID!
+  _currentLeverageRatio: BigInt! # uint256
+  _newLeverageRatio: BigInt! # uint256
+  _chunkRebalanceNotional: BigInt! # uint256
+  _totalRebalanceNotional: BigInt! # uint256
+}
+
+type ExecutionSettingsUpdated @entity {
+  id: ID!
+  _unutilizedLeveragePercentage: BigInt! # uint256
+  _twapMaxTradeSize: BigInt! # uint256
+  _twapCooldownPeriod: BigInt! # uint256
+  _slippageTolerance: BigInt! # uint256
+  _exchangeName: String! # string
+  _exchangeData: Bytes! # bytes
+}
+
+type IncentiveSettingsUpdated @entity {
+  id: ID!
+  _etherReward: BigInt! # uint256
+  _incentivizedLeverageRatio: BigInt! # uint256
+  _incentivizedSlippageTolerance: BigInt! # uint256
+  _incentivizedTwapCooldownPeriod: BigInt! # uint256
+  _incentivizedTwapMaxTradeSize: BigInt! # uint256
+}
+
+type MethodologySettingsUpdated @entity {
+  id: ID!
+  _targetLeverageRatio: BigInt! # uint256
+  _minLeverageRatio: BigInt! # uint256
+  _maxLeverageRatio: BigInt! # uint256
+  _recenteringSpeed: BigInt! # uint256
+  _rebalanceInterval: BigInt! # uint256
+}
+
+type RebalanceIterated @entity {
+  id: ID!
+  _currentLeverageRatio: BigInt! # uint256
+  _newLeverageRatio: BigInt! # uint256
+  _chunkRebalanceNotional: BigInt! # uint256
+  _totalRebalanceNotional: BigInt! # uint256
+}
+
+type Rebalanced @entity {
+  id: ID!
+  _currentLeverageRatio: BigInt! # uint256
+  _newLeverageRatio: BigInt! # uint256
+  _chunkRebalanceNotional: BigInt! # uint256
+  _totalRebalanceNotional: BigInt! # uint256
+}
+
+type RipcordCalled @entity {
+  id: ID!
+  _currentLeverageRatio: BigInt! # uint256
+  _newLeverageRatio: BigInt! # uint256
+  _rebalanceNotional: BigInt! # uint256
+  _etherIncentive: BigInt! # uint256
+}
