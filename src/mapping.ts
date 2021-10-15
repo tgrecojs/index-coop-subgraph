@@ -11,17 +11,90 @@ import {
   RipcordCalled as RipcordCalledEvent
 } from "../generated/FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter"
 import {
+  ExchangeAdded as ExchangeAddedEvent,
+  ExchangeRemoved as ExchangeRemovedEvent,
+  ExchangeUpdated as ExchangeUpdatedEvent
+} from "../generated/FlexibleLeverageStrategyExtension/FlexibleLeverageStrategyExtension"
+import {
   AnyoneCallableUpdated,
   CallerStatusUpdated,
   Disengaged,
   Engaged,
+  ExchangeAdded,
+  ExchangeRemoved,
+  ExchangeUpdated,
   ExecutionSettingsUpdated,
   IncentiveSettingsUpdated,
   MethodologySettingsUpdated,
   RebalanceIterated,
   Rebalanced,
-  RipcordCalled
+  RipcordCalled,
+  Transfer as TransferEntity
 } from "../generated/schema"
+import {
+  Approval,
+  ComponentAdded,
+  ComponentRemoved,
+  DefaultPositionUnitEdited,
+  ExternalPositionDataEdited,
+  ExternalPositionUnitEdited,
+  Invoked,
+  ManagerEdited,
+  ModuleAdded,
+  ModuleInitialized,
+  ModuleRemoved,
+  PendingModuleRemoved,
+  PositionModuleAdded,
+  PositionModuleRemoved,
+  PositionMultiplierEdited,
+  Transfer
+} from "../generated/SetToken/SetToken"
+
+export function handleTransfer(event: Transfer): void {
+  let id = event.transaction.hash.toHexString();
+  let FliTransferEntity = new TransferEntity(id);
+  FliTransferEntity.timestamp = event.block.timestamp
+  FliTransferEntity.from = event.params.from
+  FliTransferEntity.to = event.params.to
+  FliTransferEntity.value = event.params.value
+  FliTransferEntity.save()
+}
+
+export function handleExchangeAdded(event: ExchangeAddedEvent): void {
+  let entity = new ExchangeAdded(
+    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  )
+  entity._exchangeName = event.params._exchangeName
+  entity.twapMaxTradeSize = event.params.twapMaxTradeSize
+  entity.exchangeLastTradeTimestamp = event.params.exchangeLastTradeTimestamp
+  entity.incentivizedTwapMaxTradeSize =
+    event.params.incentivizedTwapMaxTradeSize
+  entity.leverExchangeData = event.params.leverExchangeData
+  entity.deleverExchangeData = event.params.deleverExchangeData
+  entity.save()
+}
+
+export function handleExchangeRemoved(event: ExchangeRemovedEvent): void {
+  let entity = new ExchangeRemoved(
+    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  )
+  entity._exchangeName = event.params._exchangeName
+  entity.save()
+}
+
+export function handleExchangeUpdated(event: ExchangeUpdatedEvent): void {
+  let entity = new ExchangeUpdated(
+    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+  )
+  entity._exchangeName = event.params._exchangeName
+  entity.twapMaxTradeSize = event.params.twapMaxTradeSize
+  entity.exchangeLastTradeTimestamp = event.params.exchangeLastTradeTimestamp
+  entity.incentivizedTwapMaxTradeSize =
+    event.params.incentivizedTwapMaxTradeSize
+  entity.leverExchangeData = event.params.leverExchangeData
+  entity.deleverExchangeData = event.params.deleverExchangeData
+  entity.save()
+}
 
 export function handleAnyoneCallableUpdated(
   event: AnyoneCallableUpdatedEvent
@@ -48,10 +121,11 @@ export function handleDisengaged(event: DisengagedEvent): void {
   let entity = new Disengaged(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity._currentLeverageRatio = event.params._currentLeverageRatio
-  entity._newLeverageRatio = event.params._newLeverageRatio
-  entity._chunkRebalanceNotional = event.params._chunkRebalanceNotional
-  entity._totalRebalanceNotional = event.params._totalRebalanceNotional
+  entity.timestamp = event.block.timestamp
+  entity.currentLeverageRatio = event.params._currentLeverageRatio
+  entity.newLeverageRatio = event.params._newLeverageRatio
+  entity.chunkRebalanceNotional = event.params._chunkRebalanceNotional
+  entity.totalRebalanceNotional = event.params._totalRebalanceNotional
   entity.save()
 }
 
@@ -59,10 +133,11 @@ export function handleEngaged(event: EngagedEvent): void {
   let entity = new Engaged(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity._currentLeverageRatio = event.params._currentLeverageRatio
-  entity._newLeverageRatio = event.params._newLeverageRatio
-  entity._chunkRebalanceNotional = event.params._chunkRebalanceNotional
-  entity._totalRebalanceNotional = event.params._totalRebalanceNotional
+  entity.timestamp = event.block.timestamp
+  entity.currentLeverageRatio = event.params._currentLeverageRatio
+  entity.newLeverageRatio = event.params._newLeverageRatio
+  entity.chunkRebalanceNotional = event.params._chunkRebalanceNotional
+  entity.totalRebalanceNotional = event.params._totalRebalanceNotional
   entity.save()
 }
 
@@ -117,10 +192,11 @@ export function handleRebalanceIterated(event: RebalanceIteratedEvent): void {
   let entity = new RebalanceIterated(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity._currentLeverageRatio = event.params._currentLeverageRatio
-  entity._newLeverageRatio = event.params._newLeverageRatio
-  entity._chunkRebalanceNotional = event.params._chunkRebalanceNotional
-  entity._totalRebalanceNotional = event.params._totalRebalanceNotional
+  entity.timestamp = event.block.timestamp
+  entity.currentLeverageRatio = event.params._currentLeverageRatio
+  entity.newLeverageRatio = event.params._newLeverageRatio
+  entity.chunkRebalanceNotional = event.params._chunkRebalanceNotional
+  entity.totalRebalanceNotional = event.params._totalRebalanceNotional
   entity.save()
 }
 
@@ -128,10 +204,15 @@ export function handleRebalanced(event: RebalancedEvent): void {
   let entity = new Rebalanced(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity._currentLeverageRatio = event.params._currentLeverageRatio
-  entity._newLeverageRatio = event.params._newLeverageRatio
-  entity._chunkRebalanceNotional = event.params._chunkRebalanceNotional
-  entity._totalRebalanceNotional = event.params._totalRebalanceNotional
+  entity.gasUsed = event.transaction.gasUsed;
+  entity.transactionHash = event.transaction.hash;
+  entity.gasPriceInGwei = event.transaction.gasPrice;
+
+  entity.timestamp = event.block.timestamp
+  entity.currentLeverageRatio = event.params._currentLeverageRatio
+  entity.newLeverageRatio = event.params._newLeverageRatio
+  entity.chunkRebalanceNotional = event.params._chunkRebalanceNotional
+  entity.totalRebalanceNotional = event.params._totalRebalanceNotional
   entity.save()
 }
 
@@ -139,9 +220,10 @@ export function handleRipcordCalled(event: RipcordCalledEvent): void {
   let entity = new RipcordCalled(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity._currentLeverageRatio = event.params._currentLeverageRatio
-  entity._newLeverageRatio = event.params._newLeverageRatio
-  entity._rebalanceNotional = event.params._rebalanceNotional
-  entity._etherIncentive = event.params._etherIncentive
+  entity.timestamp = event.block.timestamp
+  entity.currentLeverageRatio = event.params._currentLeverageRatio
+  entity.newLeverageRatio = event.params._newLeverageRatio
+  entity.rebalanceNotional = event.params._rebalanceNotional
+  entity.etherIncentive = event.params._etherIncentive
   entity.save()
 }

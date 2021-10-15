@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: FlexibleLeverageStrategyAdapter
@@ -26,7 +26,7 @@ dataSources:
         - RipcordCalled
       abis:
         - name: FlexibleLeverageStrategyAdapter
-          file: ./abis/FlexibleLeverageStrategyAdapter.json
+          file: FlexibleLeverageStrategyAdapter/abis/FlexibleLeverageStrategyAdapter.json
       eventHandlers:
         - event: AnyoneCallableUpdated(indexed bool)
           handler: handleAnyoneCallableUpdated
@@ -48,7 +48,7 @@ dataSources:
           handler: handleRebalanced
         - event: RipcordCalled(uint256,uint256,uint256,uint256)
           handler: handleRipcordCalled
-      file: ./src/mapping.ts
+      file: FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter.wasm
   - kind: ethereum/contract
     network: mainnet
     name: FlexibleLeverageStrategyExtension
@@ -60,7 +60,7 @@ dataSources:
       kind: ethereum/events
       language: wasm/assemblyscript
       abis:
-        - file: ./abis/FlexibleLeverageStrategyExtension.json
+        - file: FlexibleLeverageStrategyExtension/abis/FlexibleLeverageStrategyExtension.json
           name: FlexibleLeverageStrategyExtension
       apiVersion: 0.0.4
       entities:
@@ -80,36 +80,36 @@ dataSources:
       eventHandlers:
         - event: AnyoneCallableUpdated(indexed bool)
           handler: handleAnyoneCallableUpdated
-        - event: 'CallerStatusUpdated(indexed address,bool)'
+        - event: CallerStatusUpdated(indexed address,bool)
           handler: handleCallerStatusUpdated
-        - event: 'Disengaged(uint256,uint256,uint256,uint256)'
+        - event: Disengaged(uint256,uint256,uint256,uint256)
           handler: handleDisengaged
-        - event: 'Engaged(uint256,uint256,uint256,uint256)'
+        - event: Engaged(uint256,uint256,uint256,uint256)
           handler: handleEngaged
-        - event: 'ExchangeAdded(string,uint256,uint256,uint256,bytes,bytes)'
+        - event: ExchangeAdded(string,uint256,uint256,uint256,bytes,bytes)
           handler: handleExchangeAdded
         - event: ExchangeRemoved(string)
           handler: handleExchangeRemoved
-        - event: 'ExchangeUpdated(string,uint256,uint256,uint256,bytes,bytes)'
+        - event: ExchangeUpdated(string,uint256,uint256,uint256,bytes,bytes)
           handler: handleExchangeUpdated
-        - event: 'ExecutionSettingsUpdated(uint256,uint256,uint256)'
+        - event: ExecutionSettingsUpdated(uint256,uint256,uint256)
           handler: handleExecutionSettingsUpdated
-        - event: 'IncentiveSettingsUpdated(uint256,uint256,uint256,uint256)'
+        - event: IncentiveSettingsUpdated(uint256,uint256,uint256,uint256)
           handler: handleIncentiveSettingsUpdated
-        - event: 'MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)'
+        - event: MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)
           handler: handleMethodologySettingsUpdated
-        - event: 'RebalanceIterated(uint256,uint256,uint256,uint256)'
+        - event: RebalanceIterated(uint256,uint256,uint256,uint256)
           handler: handleRebalanceIterated
-        - event: 'Rebalanced(uint256,uint256,uint256,uint256)'
+        - event: Rebalanced(uint256,uint256,uint256,uint256)
           handler: handleRebalanced
-        - event: 'RipcordCalled(uint256,uint256,uint256,uint256)'
+        - event: RipcordCalled(uint256,uint256,uint256,uint256)
           handler: handleRipcordCalled
-      file: ./src/mapping.ts
+      file: FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter.wasm
   - kind: ethereum/contract
     network: mainnet
     name: SetToken
     source:
-      address: '0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd'
+      address: "0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd"
       abi: SetToken
       startBlock: 12035541
     mapping:
@@ -117,11 +117,11 @@ dataSources:
       language: wasm/assemblyscript
       apiVersion: 0.0.4
       abis:
-        - file: ./abis/ETH2x_FLI.json
+        - file: SetToken/abis/ETH2x_FLI.json
           name: SetToken
       entities:
         - Transfer
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-      file: ./src/mapping.ts
+      file: FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter.wasm
