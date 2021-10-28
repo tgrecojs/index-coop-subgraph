@@ -53,6 +53,7 @@ import {
 export function handleTransfer(event: Transfer): void {
   let id = event.transaction.hash.toHexString();
   let FliTransferEntity = new TransferEntity(id);
+  FliTransferEntity.txnHash = event.transaction.hash;
   FliTransferEntity.timestamp = event.block.timestamp
   FliTransferEntity.from = event.params.from
   FliTransferEntity.to = event.params.to

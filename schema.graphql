@@ -17,11 +17,53 @@ type Transaction @entity {
 
 type Transfer @entity {
   id: ID!
+  txnHash: Bytes!
   from: Bytes
   to: Bytes
   value: BigInt!
   timestamp: BigInt!
 }
+
+
+type FeeRecipientUpdated @entity {
+  id: ID!
+  _setToken: Bytes! # address
+  _newFeeRecipient: Bytes! # address
+}
+
+type IssueFeeUpdated @entity {
+  id: ID!
+  _setToken: Bytes! # address
+  _newIssueFee: BigInt! # uint256
+}
+
+type RedeemFeeUpdated @entity {
+  id: ID!
+  _setToken: Bytes! # address
+  _newRedeemFee: BigInt! # uint256
+}
+
+type SetTokenIssued @entity {
+  id: ID!
+  _setToken: Bytes! # address
+  _issuer: Bytes! # address
+  _to: Bytes! # address
+  _hookContract: Bytes! # address
+  _quantity: BigInt! # uint256
+  _managerFee: BigInt! # uint256
+  _protocolFee: BigInt! # uint256
+}
+
+type SetTokenRedeemed @entity {
+  id: ID!
+  _setToken: Bytes! # address
+  _redeemer: Bytes! # address
+  _to: Bytes! # address
+  _quantity: BigInt! # uint256
+  _managerFee: BigInt! # uint256
+  _protocolFee: BigInt! # uint256
+}
+
 
 type Disengaged @entity {
   id: ID!

@@ -125,3 +125,37 @@ dataSources:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
       file: FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter.wasm
+  - kind: ethereum/contract
+    name: DebtIssuanceModule
+    network: mainnet
+    source:
+      address: "0x39f024d621367c044bace2bf0fb15fb3612ecb92"
+      abi: DebtIssuanceModule
+      startBlock: 12028835
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - FeeRecipientUpdated
+        - IssueFeeUpdated
+        - RedeemFeeUpdated
+        - SetTokenIssued
+        - SetTokenRedeemed
+      abis:
+        - name: DebtIssuanceModule
+          file: DebtIssuanceModule/abis/DebtIssuanceModule.json
+      eventHandlers:
+        - event: FeeRecipientUpdated(indexed address,address)
+          handler: handleFeeRecipientUpdated
+        - event: IssueFeeUpdated(indexed address,uint256)
+          handler: handleIssueFeeUpdated
+        - event: RedeemFeeUpdated(indexed address,uint256)
+          handler: handleRedeemFeeUpdated
+        - event: SetTokenIssued(indexed address,indexed address,indexed
+            address,address,uint256,uint256,uint256)
+          handler: handleSetTokenIssued
+        - event: SetTokenRedeemed(indexed address,indexed address,indexed
+            address,uint256,uint256,uint256)
+          handler: handleSetTokenRedeemed
+      file: DebtIssuanceModule/DebtIssuanceModule.wasm
