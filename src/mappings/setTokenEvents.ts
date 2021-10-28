@@ -9,12 +9,12 @@ import {
   RebalanceIterated as RebalanceIteratedEvent,
   Rebalanced as RebalancedEvent,
   RipcordCalled as RipcordCalledEvent
-} from "../generated/FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter"
+} from "../../generated/FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter"
 import {
   ExchangeAdded as ExchangeAddedEvent,
   ExchangeRemoved as ExchangeRemovedEvent,
   ExchangeUpdated as ExchangeUpdatedEvent
-} from "../generated/FlexibleLeverageStrategyExtension/FlexibleLeverageStrategyExtension"
+} from "../../generated/FlexibleLeverageStrategyExtension/FlexibleLeverageStrategyExtension"
 import {
   AnyoneCallableUpdated,
   CallerStatusUpdated,
@@ -30,7 +30,7 @@ import {
   Rebalanced,
   RipcordCalled,
   Transfer as TransferEntity
-} from "../generated/schema"
+} from "../../generated/schema"
 import {
   Approval,
   ComponentAdded,
@@ -48,7 +48,7 @@ import {
   PositionModuleRemoved,
   PositionMultiplierEdited,
   Transfer
-} from "../generated/SetToken/SetToken"
+} from "../../generated/SetToken/SetToken"
 
 export function handleTransfer(event: Transfer): void {
   let id = event.transaction.hash.toHexString();
