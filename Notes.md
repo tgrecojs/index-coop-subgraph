@@ -1,5 +1,5 @@
 ## Meeting Notes - Tuesday, Aug. 30th
-
+test
 ## Shared Contract Address
 * BaseManager:
   * 0x445307De5279cD4B1BcBf38853f81b190A806075
