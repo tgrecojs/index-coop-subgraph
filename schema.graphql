@@ -54,6 +54,18 @@ type SetTokenIssued @entity {
   _protocolFee: BigInt! # uint256
 }
 
+type Component {
+id: ID!
+name: String!
+}
+
+type SetToken @entity {
+id: ID!
+address: Bytes!
+name: String!
+components: [Component!]
+
+}
 type SetTokenRedeemed @entity {
   id: ID!
   _setToken: Bytes! # address
