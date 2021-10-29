@@ -1,13 +1,14 @@
 {
-  "name": "ic-dev-staging",
+  "name": "index_coop_subgraph",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ ic-dev-staging",
-    "create-local": "graph create --node http://localhost:8020/ ic-dev-staging",
-    "remove-local": "graph remove --node http://localhost:8020/ ic-dev-staging",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 ic-dev-staging"
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ index_coop_subgraph",
+    "create-local": "graph create --node http://localhost:8020/ index_coop_subgraph",
+    "remove-local": "graph remove --node http://localhost:8020/ index_coop_subgraph",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 index_coop_subgraph",
+    "prepare": "graph codegen && graph build"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.21.1",

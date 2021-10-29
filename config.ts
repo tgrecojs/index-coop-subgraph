@@ -39,4 +39,12 @@ const contracts = [
     streamingFeeAbi: './abis/StreamingFeeModule.json',
     streamingFeeAddress: '0x08f866c74205617B6F3903EF481798EcED10cDEC',
   },
+  {
+    name: 'MVI Contract',
+    issuanceAbiName: 'BasicIssuanceModule',
+    issuanceAbi: './abis/BasicIssuanceModule.json',
+    issuanceAddress: '0xd8EF3cACe8b4907117a45B0b125c68560532F94D',
+    streamingFeeAbi: './abis/StreamingFeeModule.json',
+    streamingFeeAddress: '0x08f866c74205617B6F3903EF481798EcED10cDEC',
+  },
 ];

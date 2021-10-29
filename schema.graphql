@@ -24,7 +24,6 @@ type Transfer @entity {
   timestamp: BigInt!
 }
 
-
 type FeeRecipientUpdated @entity {
   id: ID!
   _setToken: Bytes! # address
@@ -54,18 +53,6 @@ type SetTokenIssued @entity {
   _protocolFee: BigInt! # uint256
 }
 
-type Component {
-id: ID!
-name: String!
-}
-
-type SetToken @entity {
-id: ID!
-address: Bytes!
-name: String!
-components: [Component!]
-
-}
 type SetTokenRedeemed @entity {
   id: ID!
   _setToken: Bytes! # address
@@ -75,7 +62,6 @@ type SetTokenRedeemed @entity {
   _managerFee: BigInt! # uint256
   _protocolFee: BigInt! # uint256
 }
-
 
 type Disengaged @entity {
   id: ID!
@@ -142,7 +128,7 @@ type IncentiveSettingsUpdated @entity {
 type MethodologySettingsUpdated @entity {
   id: ID!
   _targetLeverageRatio: BigInt! # uint256
-  _minLeverageRatio: BigInt! # uint256
+  _minLeverageRatio: BigInt! # uint25
   _maxLeverageRatio: BigInt! # uint256
   _recenteringSpeed: BigInt! # uint256
   _rebalanceInterval: BigInt! # uint256
@@ -176,4 +162,12 @@ type RipcordCalled @entity {
   newLeverageRatio: BigInt! # uint256
   rebalanceNotional: BigInt! # uint256
   etherIncentive: BigInt! # uint256
+}
+
+type StreamingFee @entity {
+  id: ID!
+  timestamp: BigInt!
+  setToken: Bytes!
+  managerFee: BigInt!
+  protocolFee: BigInt!
 }
