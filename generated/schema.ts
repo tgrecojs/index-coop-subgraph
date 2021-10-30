@@ -1494,21 +1494,71 @@ export class StreamingFee extends Entity {
     this.set("setToken", Value.fromBytes(value));
   }
 
-  get managerFee(): BigInt {
+  get managerFee(): BigInt | null {
     let value = this.get("managerFee");
-    return value.toBigInt();
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set managerFee(value: BigInt) {
-    this.set("managerFee", Value.fromBigInt(value));
+  set managerFee(value: BigInt | null) {
+    if (value === null) {
+      this.unset("managerFee");
+    } else {
+      this.set("managerFee", Value.fromBigInt(value as BigInt));
+    }
   }
 
-  get protocolFee(): BigInt {
+  get protocolFee(): BigInt | null {
     let value = this.get("protocolFee");
-    return value.toBigInt();
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set protocolFee(value: BigInt) {
-    this.set("protocolFee", Value.fromBigInt(value));
+  set protocolFee(value: BigInt | null) {
+    if (value === null) {
+      this.unset("protocolFee");
+    } else {
+      this.set("protocolFee", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get newStreamingFee(): BigInt | null {
+    let value = this.get("newStreamingFee");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set newStreamingFee(value: BigInt | null) {
+    if (value === null) {
+      this.unset("newStreamingFee");
+    } else {
+      this.set("newStreamingFee", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get newFeeRecipient(): Bytes | null {
+    let value = this.get("newFeeRecipient");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set newFeeRecipient(value: Bytes | null) {
+    if (value === null) {
+      this.unset("newFeeRecipient");
+    } else {
+      this.set("newFeeRecipient", Value.fromBytes(value as Bytes));
+    }
   }
 }

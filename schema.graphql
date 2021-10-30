@@ -167,7 +167,9 @@ type RipcordCalled @entity {
 type StreamingFee @entity {
   id: ID!
   timestamp: BigInt!
-  setToken: Bytes!
-  managerFee: BigInt!
-  protocolFee: BigInt!
+  setToken: Bytes! # address indexed
+  managerFee: BigInt # uint256
+  protocolFee: BigInt # uint256
+  newStreamingFee: BigInt # uint256
+  newFeeRecipient: Bytes # address
 }

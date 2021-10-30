@@ -178,4 +178,8 @@ dataSources:
       eventHandlers:
         - event: FeeActualized(indexed address,uint256,uint256)
           handler: handleFeeActualized
+        - event: StreamingFeeUpdated(indexed address,uint256)
+          handler: handleStreamingFeeUpdated
+        - event: FeeRecipientUpdated(indexed address,address)
+          handler: handleFeeReciepientUpdated
       file: StreamingFeeModule/StreamingFeeModule.wasm
