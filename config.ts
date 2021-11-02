@@ -1,6 +1,7 @@
-const contracts = [
+export const contracts = [
   {
     name: 'DPI Contract',
+    rootAddress: '0x1494ca1f11d487c2bbe4543e90080aeba4ba3c2b',
     issuanceAbiName: 'BasicIssuanceModule',
     issuanceAbi: './abis/BasicIssuanceModule.json',
     issuanceAddress: '0xd8EF3cACe8b4907117a45B0b125c68560532F94D',
@@ -9,6 +10,7 @@ const contracts = [
   },
   {
     name: 'ETH2xFLI Contract',
+    rootAddress: '0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd',
     IssuanceAbiName: 'DebtIssuanceModule',
     issuanceAbi: './abis/DebtIssuanceModule.json',
     issuanceAddress: '0x39F024d621367C044BacE2bf0Fb15Fb3612eCB92',
@@ -17,6 +19,7 @@ const contracts = [
   },
   {
     name: 'BTC2xFLI Contract',
+    rootAddress: '0x0b498ff89709d3838a063f1dfa463091f9801c2b',
     IssuanceAbiName: 'DebtIssuanceModule',
     issuanceAbi: './abis/DebtIssuanceModule.json',
     issuanceAddress: '0x39f024d621367c044bace2bf0fb15fb3612ecb92',
@@ -25,6 +28,7 @@ const contracts = [
   },
   {
     name: 'DATA Contract',
+    rootAddress: '0x33d63ba1e57e54779f7ddaeaa7109349344cf5f1',
     issuanceAbiName: 'BasicIssuanceModule',
     issuanceAbi: './abis/BasicIssuanceModule.json',
     issuanceAddress: '0xd8EF3cACe8b4907117a45B0b125c68560532F94D',
@@ -33,6 +37,7 @@ const contracts = [
   },
   {
     name: 'BED Contract',
+    rootAddress: '0x2af1df3ab0ab157e1e2ad8f88a7d04fbea0c7dc6',
     issuanceAbiName: 'BasicIssuanceModule',
     issuanceAbi: './abis/BasicIssuanceModule.json',
     issuanceAddress: '0xd8EF3cACe8b4907117a45B0b125c68560532F94D',
@@ -41,6 +46,7 @@ const contracts = [
   },
   {
     name: 'MVI Contract',
+    rootAddress: '0x72e364f2abdc788b7e918bc238b21f109cd634d7',
     issuanceAbiName: 'BasicIssuanceModule',
     issuanceAbi: './abis/BasicIssuanceModule.json',
     issuanceAddress: '0xd8EF3cACe8b4907117a45B0b125c68560532F94D',
@@ -48,3 +54,13 @@ const contracts = [
     streamingFeeAddress: '0x08f866c74205617B6F3903EF481798EcED10cDEC',
   },
 ];
+
+const add = x => y => x + y;
+const addTen = add(10)
+
+export const findItem = (data = []) => (lookupFn) =>
+  data.filter(lookupFn);
+
+const prop = name => obj => obj[name]
+
+const findContractName = findItem(contracts)(prop('rootAddress'))
