@@ -21,9 +21,9 @@ type Transfer @entity {
   from: Bytes
   to: Bytes
   value: BigInt!
+  setToken: SetToken! @derivedFrom(field: "transfers")
   timestamp: BigInt!
 }
-
 
 type FeeRecipientUpdated @entity {
   id: ID!
@@ -43,15 +43,54 @@ type RedeemFeeUpdated @entity {
   _newRedeemFee: BigInt! # uint256
 }
 
+type Component @entity {
+  id: ID!
+  name: String!
+  address: Bytes!
+  setToken: SetToken! @derivedFrom(field: "components")
+  weight: BigInt!
+}
+
+type Issuer @entity {
+  id: ID!
+  address: Bytes!
+  setTokensIssued: [SetToken]! @derivedFrom(field: "issuer")
+}
+
+type SetToken @entity {
+  id: ID!
+  address: Bytes!
+  name: String!
+  components: [Component]!
+  transfers: [Transfer]!
+  manager: Manager!
+  currentSupply: BigInt!
+  issuer: Issuer
+}
+
+type Fee @entity {
+  id: ID!
+  setToken: SetToken!
+  timestamp: BigInt!
+  managerPayout: BigInt
+  protocolPayout: BigInt
+}
+
+type Manager @entity {
+  id: ID!
+  address: Bytes!
+  feesAccrued: [Fee]!
+}
+
 type SetTokenIssued @entity {
   id: ID!
-  _setToken: Bytes! # address
-  _issuer: Bytes! # address
-  _to: Bytes! # address
+  setToken: SetToken! # address
+  issuer: Issuer! # address
+  purchaser: Bytes! # address
   _hookContract: Bytes! # address
-  _quantity: BigInt! # uint256
-  _managerFee: BigInt! # uint256
-  _protocolFee: BigInt! # uint256
+  quantity: BigInt! # uint256
+  manager: Manager
+  protocolFee: BigInt! # uint256
 }
 
 type SetTokenRedeemed @entity {
@@ -63,7 +102,6 @@ type SetTokenRedeemed @entity {
   _managerFee: BigInt! # uint256
   _protocolFee: BigInt! # uint256
 }
-
 
 type Disengaged @entity {
   id: ID!
@@ -130,7 +168,7 @@ type IncentiveSettingsUpdated @entity {
 type MethodologySettingsUpdated @entity {
   id: ID!
   _targetLeverageRatio: BigInt! # uint256
-  _minLeverageRatio: BigInt! # uint256
+  _minLeverageRatio: BigInt! # uint25
   _maxLeverageRatio: BigInt! # uint256
   _recenteringSpeed: BigInt! # uint256
   _rebalanceInterval: BigInt! # uint256
@@ -164,4 +202,14 @@ type RipcordCalled @entity {
   newLeverageRatio: BigInt! # uint256
   rebalanceNotional: BigInt! # uint256
   etherIncentive: BigInt! # uint256
+}
+
+type StreamingFee @entity {
+  id: ID!
+  timestamp: BigInt!
+  setToken: Bytes! # address indexed
+  managerFee: BigInt # uint256
+  protocolFee: BigInt # uint256
+  newStreamingFee: BigInt # uint256
+  newFeeRecipient: Bytes # address
 }

@@ -238,6 +238,15 @@ export class Transfer extends Entity {
     this.set("value", Value.fromBigInt(value));
   }
 
+  get setToken(): string {
+    let value = this.get("setToken");
+    return value.toString();
+  }
+
+  set setToken(value: string) {
+    this.set("setToken", Value.fromString(value));
+  }
+
   get timestamp(): BigInt {
     let value = this.get("timestamp");
     return value.toBigInt();
@@ -395,6 +404,356 @@ export class RedeemFeeUpdated extends Entity {
   }
 }
 
+export class Component extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Component entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Component entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Component", id.toString(), this);
+  }
+
+  static load(id: string): Component | null {
+    return store.get("Component", id) as Component | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get setToken(): string {
+    let value = this.get("setToken");
+    return value.toString();
+  }
+
+  set setToken(value: string) {
+    this.set("setToken", Value.fromString(value));
+  }
+
+  get weight(): BigInt {
+    let value = this.get("weight");
+    return value.toBigInt();
+  }
+
+  set weight(value: BigInt) {
+    this.set("weight", Value.fromBigInt(value));
+  }
+}
+
+export class Issuer extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Issuer entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Issuer entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Issuer", id.toString(), this);
+  }
+
+  static load(id: string): Issuer | null {
+    return store.get("Issuer", id) as Issuer | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get setTokensIssued(): Array<string | null> {
+    let value = this.get("setTokensIssued");
+    return value.toStringArray();
+  }
+
+  set setTokensIssued(value: Array<string | null>) {
+    this.set("setTokensIssued", Value.fromStringArray(value));
+  }
+}
+
+export class SetToken extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save SetToken entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save SetToken entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("SetToken", id.toString(), this);
+  }
+
+  static load(id: string): SetToken | null {
+    return store.get("SetToken", id) as SetToken | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get name(): string {
+    let value = this.get("name");
+    return value.toString();
+  }
+
+  set name(value: string) {
+    this.set("name", Value.fromString(value));
+  }
+
+  get components(): Array<string | null> {
+    let value = this.get("components");
+    return value.toStringArray();
+  }
+
+  set components(value: Array<string | null>) {
+    this.set("components", Value.fromStringArray(value));
+  }
+
+  get transfers(): Array<string | null> {
+    let value = this.get("transfers");
+    return value.toStringArray();
+  }
+
+  set transfers(value: Array<string | null>) {
+    this.set("transfers", Value.fromStringArray(value));
+  }
+
+  get manager(): string {
+    let value = this.get("manager");
+    return value.toString();
+  }
+
+  set manager(value: string) {
+    this.set("manager", Value.fromString(value));
+  }
+
+  get currentSupply(): BigInt {
+    let value = this.get("currentSupply");
+    return value.toBigInt();
+  }
+
+  set currentSupply(value: BigInt) {
+    this.set("currentSupply", Value.fromBigInt(value));
+  }
+
+  get issuer(): string | null {
+    let value = this.get("issuer");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set issuer(value: string | null) {
+    if (value === null) {
+      this.unset("issuer");
+    } else {
+      this.set("issuer", Value.fromString(value as string));
+    }
+  }
+}
+
+export class Fee extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Fee entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Fee entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Fee", id.toString(), this);
+  }
+
+  static load(id: string): Fee | null {
+    return store.get("Fee", id) as Fee | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get setToken(): string {
+    let value = this.get("setToken");
+    return value.toString();
+  }
+
+  set setToken(value: string) {
+    this.set("setToken", Value.fromString(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get managerPayout(): BigInt | null {
+    let value = this.get("managerPayout");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set managerPayout(value: BigInt | null) {
+    if (value === null) {
+      this.unset("managerPayout");
+    } else {
+      this.set("managerPayout", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get protocolPayout(): BigInt | null {
+    let value = this.get("protocolPayout");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set protocolPayout(value: BigInt | null) {
+    if (value === null) {
+      this.unset("protocolPayout");
+    } else {
+      this.set("protocolPayout", Value.fromBigInt(value as BigInt));
+    }
+  }
+}
+
+export class Manager extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Manager entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Manager entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Manager", id.toString(), this);
+  }
+
+  static load(id: string): Manager | null {
+    return store.get("Manager", id) as Manager | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get feesAccrued(): Array<string | null> {
+    let value = this.get("feesAccrued");
+    return value.toStringArray();
+  }
+
+  set feesAccrued(value: Array<string | null>) {
+    this.set("feesAccrued", Value.fromStringArray(value));
+  }
+}
+
 export class SetTokenIssued extends Entity {
   constructor(id: string) {
     super();
@@ -425,31 +784,31 @@ export class SetTokenIssued extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get _setToken(): Bytes {
-    let value = this.get("_setToken");
+  get setToken(): string {
+    let value = this.get("setToken");
+    return value.toString();
+  }
+
+  set setToken(value: string) {
+    this.set("setToken", Value.fromString(value));
+  }
+
+  get issuer(): string {
+    let value = this.get("issuer");
+    return value.toString();
+  }
+
+  set issuer(value: string) {
+    this.set("issuer", Value.fromString(value));
+  }
+
+  get purchaser(): Bytes {
+    let value = this.get("purchaser");
     return value.toBytes();
   }
 
-  set _setToken(value: Bytes) {
-    this.set("_setToken", Value.fromBytes(value));
-  }
-
-  get _issuer(): Bytes {
-    let value = this.get("_issuer");
-    return value.toBytes();
-  }
-
-  set _issuer(value: Bytes) {
-    this.set("_issuer", Value.fromBytes(value));
-  }
-
-  get _to(): Bytes {
-    let value = this.get("_to");
-    return value.toBytes();
-  }
-
-  set _to(value: Bytes) {
-    this.set("_to", Value.fromBytes(value));
+  set purchaser(value: Bytes) {
+    this.set("purchaser", Value.fromBytes(value));
   }
 
   get _hookContract(): Bytes {
@@ -461,31 +820,39 @@ export class SetTokenIssued extends Entity {
     this.set("_hookContract", Value.fromBytes(value));
   }
 
-  get _quantity(): BigInt {
-    let value = this.get("_quantity");
+  get quantity(): BigInt {
+    let value = this.get("quantity");
     return value.toBigInt();
   }
 
-  set _quantity(value: BigInt) {
-    this.set("_quantity", Value.fromBigInt(value));
+  set quantity(value: BigInt) {
+    this.set("quantity", Value.fromBigInt(value));
   }
 
-  get _managerFee(): BigInt {
-    let value = this.get("_managerFee");
+  get manager(): string | null {
+    let value = this.get("manager");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set manager(value: string | null) {
+    if (value === null) {
+      this.unset("manager");
+    } else {
+      this.set("manager", Value.fromString(value as string));
+    }
+  }
+
+  get protocolFee(): BigInt {
+    let value = this.get("protocolFee");
     return value.toBigInt();
   }
 
-  set _managerFee(value: BigInt) {
-    this.set("_managerFee", Value.fromBigInt(value));
-  }
-
-  get _protocolFee(): BigInt {
-    let value = this.get("_protocolFee");
-    return value.toBigInt();
-  }
-
-  set _protocolFee(value: BigInt) {
-    this.set("_protocolFee", Value.fromBigInt(value));
+  set protocolFee(value: BigInt) {
+    this.set("protocolFee", Value.fromBigInt(value));
   }
 }
 
@@ -1443,5 +1810,122 @@ export class RipcordCalled extends Entity {
 
   set etherIncentive(value: BigInt) {
     this.set("etherIncentive", Value.fromBigInt(value));
+  }
+}
+
+export class StreamingFee extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save StreamingFee entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save StreamingFee entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("StreamingFee", id.toString(), this);
+  }
+
+  static load(id: string): StreamingFee | null {
+    return store.get("StreamingFee", id) as StreamingFee | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get timestamp(): BigInt {
+    let value = this.get("timestamp");
+    return value.toBigInt();
+  }
+
+  set timestamp(value: BigInt) {
+    this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get setToken(): Bytes {
+    let value = this.get("setToken");
+    return value.toBytes();
+  }
+
+  set setToken(value: Bytes) {
+    this.set("setToken", Value.fromBytes(value));
+  }
+
+  get managerFee(): BigInt | null {
+    let value = this.get("managerFee");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set managerFee(value: BigInt | null) {
+    if (value === null) {
+      this.unset("managerFee");
+    } else {
+      this.set("managerFee", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get protocolFee(): BigInt | null {
+    let value = this.get("protocolFee");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set protocolFee(value: BigInt | null) {
+    if (value === null) {
+      this.unset("protocolFee");
+    } else {
+      this.set("protocolFee", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get newStreamingFee(): BigInt | null {
+    let value = this.get("newStreamingFee");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set newStreamingFee(value: BigInt | null) {
+    if (value === null) {
+      this.unset("newStreamingFee");
+    } else {
+      this.set("newStreamingFee", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get newFeeRecipient(): Bytes | null {
+    let value = this.get("newFeeRecipient");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set newFeeRecipient(value: Bytes | null) {
+    if (value === null) {
+      this.unset("newFeeRecipient");
+    } else {
+      this.set("newFeeRecipient", Value.fromBytes(value as Bytes));
+    }
   }
 }

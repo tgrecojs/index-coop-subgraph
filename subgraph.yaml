@@ -6,7 +6,7 @@ dataSources:
     name: FlexibleLeverageStrategyAdapter
     network: mainnet
     source:
-      address: "0x1335d01a4b572c37f800f45d9a4b36a53a898a9b"
+      address: '0x1335d01a4b572c37f800f45d9a4b36a53a898a9b'
       abi: FlexibleLeverageStrategyAdapter
       startBlock: 12035541
     mapping:
@@ -48,13 +48,13 @@ dataSources:
           handler: handleRebalanced
         - event: RipcordCalled(uint256,uint256,uint256,uint256)
           handler: handleRipcordCalled
-      file: ./src/mapping.ts
+      file: ./src/mappings/setTokenEvents.ts
   - kind: ethereum/contract
     network: mainnet
     name: FlexibleLeverageStrategyExtension
     source:
       abi: FlexibleLeverageStrategyExtension
-      address: "0xf6ba6441d4dac647898f4083483aa44da8b1446f"
+      address: '0xf6ba6441d4dac647898f4083483aa44da8b1446f'
       startBlock: 12743477
     mapping:
       kind: ethereum/events
@@ -80,36 +80,36 @@ dataSources:
       eventHandlers:
         - event: AnyoneCallableUpdated(indexed bool)
           handler: handleAnyoneCallableUpdated
-        - event: "CallerStatusUpdated(indexed address,bool)"
+        - event: 'CallerStatusUpdated(indexed address,bool)'
           handler: handleCallerStatusUpdated
-        - event: "Disengaged(uint256,uint256,uint256,uint256)"
+        - event: 'Disengaged(uint256,uint256,uint256,uint256)'
           handler: handleDisengaged
-        - event: "Engaged(uint256,uint256,uint256,uint256)"
+        - event: 'Engaged(uint256,uint256,uint256,uint256)'
           handler: handleEngaged
-        - event: "ExchangeAdded(string,uint256,uint256,uint256,bytes,bytes)"
+        - event: 'ExchangeAdded(string,uint256,uint256,uint256,bytes,bytes)'
           handler: handleExchangeAdded
         - event: ExchangeRemoved(string)
           handler: handleExchangeRemoved
-        - event: "ExchangeUpdated(string,uint256,uint256,uint256,bytes,bytes)"
+        - event: 'ExchangeUpdated(string,uint256,uint256,uint256,bytes,bytes)'
           handler: handleExchangeUpdated
-        - event: "ExecutionSettingsUpdated(uint256,uint256,uint256)"
+        - event: 'ExecutionSettingsUpdated(uint256,uint256,uint256)'
           handler: handleExecutionSettingsUpdated
-        - event: "IncentiveSettingsUpdated(uint256,uint256,uint256,uint256)"
+        - event: 'IncentiveSettingsUpdated(uint256,uint256,uint256,uint256)'
           handler: handleIncentiveSettingsUpdated
-        - event: "MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)"
+        - event: 'MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)'
           handler: handleMethodologySettingsUpdated
-        - event: "RebalanceIterated(uint256,uint256,uint256,uint256)"
+        - event: 'RebalanceIterated(uint256,uint256,uint256,uint256)'
           handler: handleRebalanceIterated
-        - event: "Rebalanced(uint256,uint256,uint256,uint256)"
+        - event: 'Rebalanced(uint256,uint256,uint256,uint256)'
           handler: handleRebalanced
-        - event: "RipcordCalled(uint256,uint256,uint256,uint256)"
+        - event: 'RipcordCalled(uint256,uint256,uint256,uint256)'
           handler: handleRipcordCalled
-      file: ./src/mapping.ts
+      file: ./src/mappings/setTokenEvents.ts
   - kind: ethereum/contract
     network: mainnet
     name: SetToken
     source:
-      address: "0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd"
+      address: '0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd'
       abi: SetToken
       startBlock: 12035541
     mapping:
@@ -117,21 +117,21 @@ dataSources:
       language: wasm/assemblyscript
       apiVersion: 0.0.4
       abis:
-        - file: ./abis/ETH2x_FLI.json
+        - file: ./abis/SetToken.json
           name: SetToken
       entities:
         - Transfer
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-      file: ./src/mapping.ts
+      file: ./src/mappings/setTokenEvents.ts
   - kind: ethereum/contract
     name: DebtIssuanceModule
     network: mainnet
     source:
-      address: { { issuanceContract } }
-      abi: { { issuanceAbi } }
-      startBlock: { { startBlock } }
+      address: '0x39f024d621367c044bace2bf0fb15fb3612ecb92'
+      abi: DebtIssuanceModule
+      startBlock: 12028835
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -157,3 +157,27 @@ dataSources:
         - event: SetTokenRedeemed(indexed address,indexed address,indexed address,uint256,uint256,uint256)
           handler: handleSetTokenRedeemed
       file: ./src/mappings/issuanceEvents.ts
+  - kind: ethereum/contract
+    name: StreamingFeeModule
+    network: mainnet
+    source:
+      address: '0x08f866c74205617B6F3903EF481798EcED10cDEC'
+      abi: StreamingFeeModule
+      startBlock: 12028835
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - StreamingFee
+      abis:
+        - name: StreamingFeeModule
+          file: ./abis/StreamingFeeModule.json
+      eventHandlers:
+        - event: FeeActualized(indexed address,uint256,uint256)
+          handler: handleFeeActualized
+        - event: StreamingFeeUpdated(indexed address,uint256)
+          handler: handleStreamingFeeUpdated
+        - event: FeeRecipientUpdated(indexed address,address)
+          handler: handleFeeReciepientUpdated
+      file: ./src/mappings/streamingFeeEvents.ts

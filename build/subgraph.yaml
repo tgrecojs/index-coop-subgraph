@@ -117,7 +117,7 @@ dataSources:
       language: wasm/assemblyscript
       apiVersion: 0.0.4
       abis:
-        - file: SetToken/abis/ETH2x_FLI.json
+        - file: SetToken/abis/SetToken.json
           name: SetToken
       entities:
         - Transfer
@@ -159,3 +159,27 @@ dataSources:
             address,uint256,uint256,uint256)
           handler: handleSetTokenRedeemed
       file: DebtIssuanceModule/DebtIssuanceModule.wasm
+  - kind: ethereum/contract
+    name: StreamingFeeModule
+    network: mainnet
+    source:
+      address: "0x08f866c74205617B6F3903EF481798EcED10cDEC"
+      abi: StreamingFeeModule
+      startBlock: 12028835
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - StreamingFee
+      abis:
+        - name: StreamingFeeModule
+          file: StreamingFeeModule/abis/StreamingFeeModule.json
+      eventHandlers:
+        - event: FeeActualized(indexed address,uint256,uint256)
+          handler: handleFeeActualized
+        - event: StreamingFeeUpdated(indexed address,uint256)
+          handler: handleStreamingFeeUpdated
+        - event: FeeRecipientUpdated(indexed address,address)
+          handler: handleFeeReciepientUpdated
+      file: StreamingFeeModule/StreamingFeeModule.wasm
