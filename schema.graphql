@@ -21,7 +21,7 @@ type Transfer @entity {
   from: Bytes
   to: Bytes
   value: BigInt!
-  setToken: SetToken! @derivedFrom(field: "transfers")
+  setToken: SetToken!
   timestamp: BigInt!
 }
 
@@ -48,29 +48,32 @@ type Component @entity {
   name: String!
   address: Bytes!
   setToken: SetToken! @derivedFrom(field: "components")
-  weight: BigInt!
 }
 
 type Issuer @entity {
   id: ID!
   address: Bytes!
-  setTokensIssued: [SetToken]! @derivedFrom(field: "issuer")
+  setTokensIssued: [TokenIssuance!]!
 }
-
+type TokenIssuance @entity {
+  id: ID!
+  buyerAddress: Bytes!
+  setTokenIssued: SetToken! @derivedFrom (field: "issuances")
+  quantity: BigInt!
+}
 type SetToken @entity {
   id: ID!
   address: Bytes!
   name: String!
   components: [Component]!
-  transfers: [Transfer]!
   manager: Manager!
-  currentSupply: BigInt!
-  issuer: Issuer
+  issuer: Issuer!
+  issuances: [TokenIssuance!] 
+  totalSupply: BigInt!
 }
 
 type Fee @entity {
   id: ID!
-  setToken: SetToken!
   timestamp: BigInt!
   managerPayout: BigInt
   protocolPayout: BigInt
@@ -79,7 +82,8 @@ type Fee @entity {
 type Manager @entity {
   id: ID!
   address: Bytes!
-  feesAccrued: [Fee]!
+  feeAccrualHistory: [Fee!]
+  tokensManaged: [SetToken!]
 }
 
 type SetTokenIssued @entity {

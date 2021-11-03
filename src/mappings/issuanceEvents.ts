@@ -16,12 +16,16 @@ import {
   SetToken,
   Manager,
   Component,
+  Fee,
+  TokenIssuance,
 } from '../../generated/schema';
 
 import {
   contracts,
   findByAddress,
 } from '../../config';
+import { fetchManager, fetchTokenTotalSupply, fetchUnderlyingComponents } from '../utils/setToken';
+import { BigInt, Entity, ethereum } from '@graphprotocol/graph-ts';
 
 export function handleFeeRecipientUpdated(
   event: FeeRecipientUpdatedEvent
@@ -52,43 +56,139 @@ export function handleRedeemFeeUpdated(event: RedeemFeeUpdatedEvent): void {
   entity.save();
 }
 
-let issuer = {
-  id: null,
-  setTokensIssued: [],
-};
+const unwrap = (arr: []): object => {
+  const value = [arr];
+  return value
+}
+
+const defaultFee = {
+  id: '',
+  timestamp: null,
+  managerPayout: new BigInt(0),
+  protocolPayout: new BigInt(0)
+  , Entity: Fee
+}
+
+const createFee = (obj: any = defaultFee): object => {
+  const { id, timestamp, managerPayout, protocolPayout, Entity } = obj;
+  let fee = new Entity(id)
+  fee.timestamp = timestamp;
+  fee.managerPayout = managerPayout;
+  fee.protocolPayout = protocolPayout;
+  return fee
+}
+const defaultManager = {
+  id: '',
+  address: null,
+  feeAccrualHistory: [],
+  tokensManaged: [],
+  Entity: Manager
+}
+
+
+const createManager = (obj: any = defaultFee): Manager  => {
+  const { id, address, feeAccrualHistory, Entity } = obj;
+  let manager = new Entity(id)
+  manager.address = address;
+  manager.feeAccrualHistory = feeAccrualHistory;
+  manager.tokensManaged = [];
+  return manager
+}
+
+const defaultIssuance = {
+  id: '',
+  buyerAddress: null,
+  quantity: new BigInt(0),
+  Entity: TokenIssuance
+}
+
+const createIssuance = (obj: any = defaultIssuance): object => {
+  const { id, buyerAddress, quantity, Entity } = obj
+  let issuanceEntity = new Entity(id)
+  issuanceEntity.buyerAddress = buyerAddress;
+  issuanceEntity.quantity = quantity
+  return issuanceEntity
+}
+const createGenericId = (event: ethereum.Event): String =>
+  event.transaction.hash.toHex() + - + event.logIndex.toString();
 
 export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   let id = event.params._issuer
   let setTokenAddress = event.params._setToken
+  let timestamp = event.block.timestamp;
   let setToken;
-  if (!SetToken.load(setTokenAddress.toHexString())) {
-    setToken = new SetToken(setTokenAddress.toHexString())
-    setToken.address = setTokenAddress
-    
-    setToken.name = contracts[]
-    
+  let createIssuanceEntity = createIssuance({
+    id: createGenericId(event),
+    quantity: event.params._quantity,
+    buyerAddress: event.params._to
+  })
+
+  let managerE: Manager;
+
+
+  let createFeeEntity = createFee({
+    id: createGenericId(event),
+    timestamp, managerPayout: event.params._managerFee, protocolPayout: event.params._protocolFee
+  })
+  if (!Manager.load(fetchManager(setTokenAddress).toHexString())) {
+    managerE = createManager({
+      id: fetchManager(setTokenAddress).toHexString(),
+      address: fetchManager(setTokenAddress),
+      feeAccrualHistory: [createFeeEntity]
+    })
   } else {
+    managerE = Manager.load(fetchManager(setTokenAddress).toHexString())
+    let currentManagerFees = managerE.feeAccrualHistory;
+
+    currentManagerFees.push(createFeeEntity)
+    managerE.feeAccrualHistory = currentManagerFees
 
   }
+
+
+
+  if (!SetToken.load(setTokenAddress.toHexString())) {
+    let setTokenEntity = new SetToken(setTokenAddress.toHexString())
+    setTokenEntity.address = setTokenAddress
+
+    const icTokenObj = contracts.filter(x => x.rootAddress === setTokenAddress.toHexString());
+    setTokenEntity.name = icTokenObj[0].name;
+    setTokenEntity.totalSupply = fetchTokenTotalSupply(setTokenAddress)
+    setTokenEntity.manager = managerE;
+    setToken = setTokenEntity;
+  } else {
+    let exisitingToken = SetToken.load(setTokenAddress.toHexString())
+    exisitingToken.totalSupply = fetchTokenTotalSupply(setTokenAddress)
+    setToken = exisitingToken;
+  }
+
+  let tokensManagedArray = managerE.tokensManaged
+  tokensManagedArray.push(setToken)
+  managerE.tokensManaged = tokensManagedArray
+
+
+
+  let issuerE;
+
   if (!Issuer.load(id.toHexString())) {
     let issuerEntity = new Issuer(id.toHexString());
     issuerEntity.address = id
-    issuerEntity.setTokensIssued  = [setToken]
+    issuerEntity.setTokensIssued = [setToken]
+    issuerE = issuerEntity
   } else {
     let existingIssuer = Issuer.load(id.toHexString());
-    existingIssuer.setTokensIssued = existingIssuer.setTokensIssued.push(setToken)
+    let exisitingIssuances = existingIssuer.setTokensIssued;
+    exisitingIssuances.push(setToken)
+    existingIssuer.setTokensIssued = exisitingIssuances;
+    issuerE = existingIssuer
   }
-  let entity = new SetTokenIssued(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
-  );
-  entity.setToken = event.params._setToken;
-  entity.issuer = event.params._issuer;
-  entity.to = event.params._to;
-  entity._hookContract = event.params._hookContract;
-  entity.quantity = event.params._quantity;
-  entity.managerFee = event.params._managerFee;
-  entity.protocolFee = event.params._protocolFee;
-  entity.save();
+
+  issuerE.save()
+  managerE.save()
+  createFeeEntity.save()
+  createIssuanceEntity.save();
+  setToken.save()
+
 }
 
 export function handleSetTokenRedeemed(event: SetTokenRedeemedEvent): void {

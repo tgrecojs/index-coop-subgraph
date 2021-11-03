@@ -460,15 +460,6 @@ export class Component extends Entity {
   set setToken(value: string) {
     this.set("setToken", Value.fromString(value));
   }
-
-  get weight(): BigInt {
-    let value = this.get("weight");
-    return value.toBigInt();
-  }
-
-  set weight(value: BigInt) {
-    this.set("weight", Value.fromBigInt(value));
-  }
 }
 
 export class Issuer extends Entity {
@@ -510,13 +501,71 @@ export class Issuer extends Entity {
     this.set("address", Value.fromBytes(value));
   }
 
-  get setTokensIssued(): Array<string | null> {
+  get setTokensIssued(): Array<string> {
     let value = this.get("setTokensIssued");
     return value.toStringArray();
   }
 
-  set setTokensIssued(value: Array<string | null>) {
+  set setTokensIssued(value: Array<string>) {
     this.set("setTokensIssued", Value.fromStringArray(value));
+  }
+}
+
+export class TokenIssuance extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save TokenIssuance entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save TokenIssuance entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("TokenIssuance", id.toString(), this);
+  }
+
+  static load(id: string): TokenIssuance | null {
+    return store.get("TokenIssuance", id) as TokenIssuance | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get buyerAddress(): Bytes {
+    let value = this.get("buyerAddress");
+    return value.toBytes();
+  }
+
+  set buyerAddress(value: Bytes) {
+    this.set("buyerAddress", Value.fromBytes(value));
+  }
+
+  get setTokenIssued(): string {
+    let value = this.get("setTokenIssued");
+    return value.toString();
+  }
+
+  set setTokenIssued(value: string) {
+    this.set("setTokenIssued", Value.fromString(value));
+  }
+
+  get quantity(): BigInt {
+    let value = this.get("quantity");
+    return value.toBigInt();
+  }
+
+  set quantity(value: BigInt) {
+    this.set("quantity", Value.fromBigInt(value));
   }
 }
 
@@ -577,15 +626,6 @@ export class SetToken extends Entity {
     this.set("components", Value.fromStringArray(value));
   }
 
-  get transfers(): Array<string | null> {
-    let value = this.get("transfers");
-    return value.toStringArray();
-  }
-
-  set transfers(value: Array<string | null>) {
-    this.set("transfers", Value.fromStringArray(value));
-  }
-
   get manager(): string {
     let value = this.get("manager");
     return value.toString();
@@ -595,30 +635,39 @@ export class SetToken extends Entity {
     this.set("manager", Value.fromString(value));
   }
 
-  get currentSupply(): BigInt {
-    let value = this.get("currentSupply");
-    return value.toBigInt();
-  }
-
-  set currentSupply(value: BigInt) {
-    this.set("currentSupply", Value.fromBigInt(value));
-  }
-
-  get issuer(): string | null {
+  get issuer(): string {
     let value = this.get("issuer");
+    return value.toString();
+  }
+
+  set issuer(value: string) {
+    this.set("issuer", Value.fromString(value));
+  }
+
+  get issuances(): Array<string> | null {
+    let value = this.get("issuances");
     if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
-      return value.toString();
+      return value.toStringArray();
     }
   }
 
-  set issuer(value: string | null) {
+  set issuances(value: Array<string> | null) {
     if (value === null) {
-      this.unset("issuer");
+      this.unset("issuances");
     } else {
-      this.set("issuer", Value.fromString(value as string));
+      this.set("issuances", Value.fromStringArray(value as Array<string>));
     }
+  }
+
+  get totalSupply(): BigInt {
+    let value = this.get("totalSupply");
+    return value.toBigInt();
+  }
+
+  set totalSupply(value: BigInt) {
+    this.set("totalSupply", Value.fromBigInt(value));
   }
 }
 
@@ -650,15 +699,6 @@ export class Fee extends Entity {
 
   set id(value: string) {
     this.set("id", Value.fromString(value));
-  }
-
-  get setToken(): string {
-    let value = this.get("setToken");
-    return value.toString();
-  }
-
-  set setToken(value: string) {
-    this.set("setToken", Value.fromString(value));
   }
 
   get timestamp(): BigInt {
@@ -744,13 +784,41 @@ export class Manager extends Entity {
     this.set("address", Value.fromBytes(value));
   }
 
-  get feesAccrued(): Array<string | null> {
-    let value = this.get("feesAccrued");
-    return value.toStringArray();
+  get feeAccrualHistory(): Array<string> | null {
+    let value = this.get("feeAccrualHistory");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
   }
 
-  set feesAccrued(value: Array<string | null>) {
-    this.set("feesAccrued", Value.fromStringArray(value));
+  set feeAccrualHistory(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("feeAccrualHistory");
+    } else {
+      this.set(
+        "feeAccrualHistory",
+        Value.fromStringArray(value as Array<string>)
+      );
+    }
+  }
+
+  get tokensManaged(): Array<string> | null {
+    let value = this.get("tokensManaged");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set tokensManaged(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("tokensManaged");
+    } else {
+      this.set("tokensManaged", Value.fromStringArray(value as Array<string>));
+    }
   }
 }
 
