@@ -404,64 +404,6 @@ export class RedeemFeeUpdated extends Entity {
   }
 }
 
-export class Component extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id !== null, "Cannot save Component entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Component entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Component", id.toString(), this);
-  }
-
-  static load(id: string): Component | null {
-    return store.get("Component", id) as Component | null;
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get name(): string {
-    let value = this.get("name");
-    return value.toString();
-  }
-
-  set name(value: string) {
-    this.set("name", Value.fromString(value));
-  }
-
-  get address(): Bytes {
-    let value = this.get("address");
-    return value.toBytes();
-  }
-
-  set address(value: Bytes) {
-    this.set("address", Value.fromBytes(value));
-  }
-
-  get setToken(): string {
-    let value = this.get("setToken");
-    return value.toString();
-  }
-
-  set setToken(value: string) {
-    this.set("setToken", Value.fromString(value));
-  }
-}
-
 export class Issuer extends Entity {
   constructor(id: string) {
     super();
@@ -550,13 +492,13 @@ export class TokenIssuance extends Entity {
     this.set("buyerAddress", Value.fromBytes(value));
   }
 
-  get setTokenIssued(): string {
-    let value = this.get("setTokenIssued");
+  get setToken(): string {
+    let value = this.get("setToken");
     return value.toString();
   }
 
-  set setTokenIssued(value: string) {
-    this.set("setTokenIssued", Value.fromString(value));
+  set setToken(value: string) {
+    this.set("setToken", Value.fromString(value));
   }
 
   get quantity(): BigInt {
@@ -615,15 +557,6 @@ export class SetToken extends Entity {
 
   set name(value: string) {
     this.set("name", Value.fromString(value));
-  }
-
-  get components(): Array<string | null> {
-    let value = this.get("components");
-    return value.toStringArray();
-  }
-
-  set components(value: Array<string | null>) {
-    this.set("components", Value.fromStringArray(value));
   }
 
   get manager(): string {
@@ -708,6 +641,15 @@ export class Fee extends Entity {
 
   set timestamp(value: BigInt) {
     this.set("timestamp", Value.fromBigInt(value));
+  }
+
+  get manager(): string {
+    let value = this.get("manager");
+    return value.toString();
+  }
+
+  set manager(value: string) {
+    this.set("manager", Value.fromString(value));
   }
 
   get managerPayout(): BigInt | null {
@@ -804,21 +746,22 @@ export class Manager extends Entity {
     }
   }
 
-  get tokensManaged(): Array<string> | null {
-    let value = this.get("tokensManaged");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
+  get totalFees(): BigInt {
+    let value = this.get("totalFees");
+    return value.toBigInt();
   }
 
-  set tokensManaged(value: Array<string> | null) {
-    if (value === null) {
-      this.unset("tokensManaged");
-    } else {
-      this.set("tokensManaged", Value.fromStringArray(value as Array<string>));
-    }
+  set totalFees(value: BigInt) {
+    this.set("totalFees", Value.fromBigInt(value));
+  }
+
+  get setToken(): string {
+    let value = this.get("setToken");
+    return value.toString();
+  }
+
+  set setToken(value: string) {
+    this.set("setToken", Value.fromString(value));
   }
 }
 
@@ -897,21 +840,13 @@ export class SetTokenIssued extends Entity {
     this.set("quantity", Value.fromBigInt(value));
   }
 
-  get manager(): string | null {
+  get manager(): string {
     let value = this.get("manager");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
+    return value.toString();
   }
 
-  set manager(value: string | null) {
-    if (value === null) {
-      this.unset("manager");
-    } else {
-      this.set("manager", Value.fromString(value as string));
-    }
+  set manager(value: string) {
+    this.set("manager", Value.fromString(value));
   }
 
   get protocolFee(): BigInt {

@@ -43,13 +43,6 @@ type RedeemFeeUpdated @entity {
   _newRedeemFee: BigInt! # uint256
 }
 
-type Component @entity {
-  id: ID!
-  name: String!
-  address: Bytes!
-  setToken: SetToken! @derivedFrom(field: "components")
-}
-
 type Issuer @entity {
   id: ID!
   address: Bytes!
@@ -58,23 +51,23 @@ type Issuer @entity {
 type TokenIssuance @entity {
   id: ID!
   buyerAddress: Bytes!
-  setTokenIssued: SetToken! @derivedFrom (field: "issuances")
+  setToken: SetToken! @derivedFrom (field: "issuances")
   quantity: BigInt!
 }
 type SetToken @entity {
   id: ID!
   address: Bytes!
   name: String!
-  components: [Component]!
   manager: Manager!
   issuer: Issuer!
-  issuances: [TokenIssuance!] 
+  issuances: [TokenIssuance!]
   totalSupply: BigInt!
 }
 
 type Fee @entity {
   id: ID!
   timestamp: BigInt!
+  manager: Manager! @derivedFrom (field:"feeAccrualHistory")
   managerPayout: BigInt
   protocolPayout: BigInt
 }
@@ -83,7 +76,8 @@ type Manager @entity {
   id: ID!
   address: Bytes!
   feeAccrualHistory: [Fee!]
-  tokensManaged: [SetToken!]
+  totalFees: BigInt!
+  setToken: SetToken!
 }
 
 type SetTokenIssued @entity {
@@ -93,7 +87,7 @@ type SetTokenIssued @entity {
   purchaser: Bytes! # address
   _hookContract: Bytes! # address
   quantity: BigInt! # uint256
-  manager: Manager
+  manager: Manager!
   protocolFee: BigInt! # uint256
 }
 
