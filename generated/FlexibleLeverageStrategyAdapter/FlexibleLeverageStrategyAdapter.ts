@@ -507,7 +507,9 @@ export class FlexibleLeverageStrategyAdapter extends ethereum.SmartContract {
       []
     );
 
-    return result[0].toTuple() as FlexibleLeverageStrategyAdapter__getExecutionResultValue0Struct;
+    return changetype<
+      FlexibleLeverageStrategyAdapter__getExecutionResultValue0Struct
+    >(result[0].toTuple());
   }
 
   try_getExecution(): ethereum.CallResult<
@@ -523,7 +525,9 @@ export class FlexibleLeverageStrategyAdapter extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      value[0].toTuple() as FlexibleLeverageStrategyAdapter__getExecutionResultValue0Struct
+      changetype<
+        FlexibleLeverageStrategyAdapter__getExecutionResultValue0Struct
+      >(value[0].toTuple())
     );
   }
 
@@ -534,7 +538,9 @@ export class FlexibleLeverageStrategyAdapter extends ethereum.SmartContract {
       []
     );
 
-    return result[0].toTuple() as FlexibleLeverageStrategyAdapter__getIncentiveResultValue0Struct;
+    return changetype<
+      FlexibleLeverageStrategyAdapter__getIncentiveResultValue0Struct
+    >(result[0].toTuple());
   }
 
   try_getIncentive(): ethereum.CallResult<
@@ -550,7 +556,9 @@ export class FlexibleLeverageStrategyAdapter extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      value[0].toTuple() as FlexibleLeverageStrategyAdapter__getIncentiveResultValue0Struct
+      changetype<
+        FlexibleLeverageStrategyAdapter__getIncentiveResultValue0Struct
+      >(value[0].toTuple())
     );
   }
 
@@ -561,7 +569,9 @@ export class FlexibleLeverageStrategyAdapter extends ethereum.SmartContract {
       []
     );
 
-    return result[0].toTuple() as FlexibleLeverageStrategyAdapter__getMethodologyResultValue0Struct;
+    return changetype<
+      FlexibleLeverageStrategyAdapter__getMethodologyResultValue0Struct
+    >(result[0].toTuple());
   }
 
   try_getMethodology(): ethereum.CallResult<
@@ -577,7 +587,9 @@ export class FlexibleLeverageStrategyAdapter extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      value[0].toTuple() as FlexibleLeverageStrategyAdapter__getMethodologyResultValue0Struct
+      changetype<
+        FlexibleLeverageStrategyAdapter__getMethodologyResultValue0Struct
+      >(value[0].toTuple())
     );
   }
 
@@ -588,7 +600,9 @@ export class FlexibleLeverageStrategyAdapter extends ethereum.SmartContract {
       []
     );
 
-    return result[0].toTuple() as FlexibleLeverageStrategyAdapter__getStrategyResultValue0Struct;
+    return changetype<
+      FlexibleLeverageStrategyAdapter__getStrategyResultValue0Struct
+    >(result[0].toTuple());
   }
 
   try_getStrategy(): ethereum.CallResult<
@@ -604,7 +618,9 @@ export class FlexibleLeverageStrategyAdapter extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      value[0].toTuple() as FlexibleLeverageStrategyAdapter__getStrategyResultValue0Struct
+      changetype<
+        FlexibleLeverageStrategyAdapter__getStrategyResultValue0Struct
+      >(value[0].toTuple())
     );
   }
 
@@ -746,19 +762,27 @@ export class ConstructorCall__Inputs {
   }
 
   get _strategy(): ConstructorCall_strategyStruct {
-    return this._call.inputValues[1].value.toTuple() as ConstructorCall_strategyStruct;
+    return changetype<ConstructorCall_strategyStruct>(
+      this._call.inputValues[1].value.toTuple()
+    );
   }
 
   get _methodology(): ConstructorCall_methodologyStruct {
-    return this._call.inputValues[2].value.toTuple() as ConstructorCall_methodologyStruct;
+    return changetype<ConstructorCall_methodologyStruct>(
+      this._call.inputValues[2].value.toTuple()
+    );
   }
 
   get _execution(): ConstructorCall_executionStruct {
-    return this._call.inputValues[3].value.toTuple() as ConstructorCall_executionStruct;
+    return changetype<ConstructorCall_executionStruct>(
+      this._call.inputValues[3].value.toTuple()
+    );
   }
 
   get _incentive(): ConstructorCall_incentiveStruct {
-    return this._call.inputValues[4].value.toTuple() as ConstructorCall_incentiveStruct;
+    return changetype<ConstructorCall_incentiveStruct>(
+      this._call.inputValues[4].value.toTuple()
+    );
   }
 }
 
@@ -1022,7 +1046,9 @@ export class SetExecutionSettingsCall__Inputs {
   }
 
   get _newExecutionSettings(): SetExecutionSettingsCall_newExecutionSettingsStruct {
-    return this._call.inputValues[0].value.toTuple() as SetExecutionSettingsCall_newExecutionSettingsStruct;
+    return changetype<SetExecutionSettingsCall_newExecutionSettingsStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
   }
 }
 
@@ -1078,7 +1104,9 @@ export class SetIncentiveSettingsCall__Inputs {
   }
 
   get _newIncentiveSettings(): SetIncentiveSettingsCall_newIncentiveSettingsStruct {
-    return this._call.inputValues[0].value.toTuple() as SetIncentiveSettingsCall_newIncentiveSettingsStruct;
+    return changetype<SetIncentiveSettingsCall_newIncentiveSettingsStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
   }
 }
 
@@ -1130,7 +1158,9 @@ export class SetMethodologySettingsCall__Inputs {
   }
 
   get _newMethodologySettings(): SetMethodologySettingsCall_newMethodologySettingsStruct {
-    return this._call.inputValues[0].value.toTuple() as SetMethodologySettingsCall_newMethodologySettingsStruct;
+    return changetype<SetMethodologySettingsCall_newMethodologySettingsStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
   }
 }
 

@@ -20,10 +20,6 @@ import {
 } from '../../generated/schema';
 import {SetToken as SetTokenContract} from '../../generated/SetToken/SetToken'
 
-import {
-  contracts,
-  findByAddress,
-} from '../../config';
 import { fetchManager, fetchTokenTotalSupply, fetchUnderlyingComponents } from '../utils/setToken';
 import { Address, BigInt, ByteArray, Bytes, Entity, ethereum, log } from '@graphprotocol/graph-ts';
 
@@ -117,15 +113,9 @@ if (!Manager.load(fetchManager(setTokenAddress))) {
 if (!SetToken.load(setTokenAddress.toHexString())) {
   let setTokenEntity = new SetToken(setTokenAddress.toHexString())
   setTokenEntity.address = setTokenAddress
-
-  let icTokenObj = contracts.filter(x => x.rootAddress === event.params._setToken.toHexString());
-  setTokenEntity.name = icTokenObj[0].name;
+  setTokenEntity.name = `SetToken::${setTokenAddress.toHexString()}`
   setTokenEntity.totalSupply = fetchTokenTotalSupply(setTokenAddress)
   setTokenEntity.save()
-} else {
-  let exisitingToken = SetToken.load(setTokenAddress.toHexString())
-  exisitingToken.totalSupply = fetchTokenTotalSupply(setTokenAddress)
-  exisitingToken.save()
 }
 
 
@@ -134,13 +124,7 @@ if (!Issuer.load(id.toHexString())) {
   let issuerEntity = new Issuer(id.toHexString());
   issuerEntity.address = id;
  issuerEntity.save()
-} else {
-  let existingIssuer = Issuer.load(id.toHexString());
-  let exisitingIssuances = existingIssuer.setTokensIssued;
-  existingIssuer.setTokensIssued = exisitingIssuances;
-  existingIssuer.save()
 }
-
 managerE.save()
 createFeeEntity.save()
 createIssuanceEntity.save();

@@ -205,7 +205,7 @@ export function handleRebalanced(event: RebalancedEvent): void {
   let entity = new Rebalanced(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.gasUsed = event.transaction.gasUsed;
+  entity.gasLimit = event.transaction.gasLimit;
   entity.transactionHash = event.transaction.hash;
   entity.gasPriceInGwei = event.transaction.gasPrice;
 

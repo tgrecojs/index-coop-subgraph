@@ -65,7 +65,3 @@ export let contracts: SetToken[] = [
     streamingFeeAddress: '0x08f866c74205617B6F3903EF481798EcED10cDEC',
   },
 ];
-
-
-export const findByAddress = (address: string): SetToken => 
-contracts.filter(x => x.rootAddress === address)[0]

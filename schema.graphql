@@ -188,7 +188,7 @@ type Rebalanced @entity {
   newLeverageRatio: BigInt! # uint256
   chunkRebalanceNotional: BigInt! # uint256
   totalRebalanceNotional: BigInt! # uint256
-  gasUsed: BigInt!
+  gasLimit: BigInt!
   gasPriceInGwei: BigInt!
   transactionHash: Bytes!
 }
