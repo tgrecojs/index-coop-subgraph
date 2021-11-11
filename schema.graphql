@@ -54,6 +54,7 @@ type TokenIssuance @entity {
   setToken: SetToken! @derivedFrom (field: "issuances")
   quantity: BigInt!
 }
+
 type SetToken @entity {
   id: ID!
   address: Bytes!
@@ -76,7 +77,7 @@ type Manager @entity {
   id: ID!
   address: Bytes!
   feeAccrualHistory: [Fee!]
-  totalFees: BigInt!
+  totalFees: BigInt
   setToken: SetToken!
 }
 

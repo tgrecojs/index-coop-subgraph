@@ -64,7 +64,8 @@ const createManager = (id: string, address: Address, feeAccrualHistory: Fee[]): 
   let manager = new Manager(id)
   manager.address = address;
   manager.feeAccrualHistory = []
-  return manager as Manager
+  manager.totalFees = BigInt.fromI32(0)
+  return manager
 }
 
 const updateManager = (id: string, address: Address, 
@@ -82,49 +83,63 @@ const createIssuance = (id: string, buyerAddress: Bytes, quantity: BigInt): Toke
 const createGenericId = (event: ethereum.Event): string =>
   '' + event.transaction.hash.toHex() + '-' + event.logIndex.toString() + '';
 
+const createIssuer = (address: Address): Issuer => {
+  let newIssuer = new Issuer(address.toHexString())
+  newIssuer.address = address;
+  newIssuer.setTokensIssued = []
+  return newIssuer
+}
 export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   let id = event.params._issuer
   let setTokenAddress = event.params._setToken
   let timestamp = event.block.timestamp;
-  let setToken: SetToken;
   let createIssuanceEntity = createIssuance(createGenericId(event),
     event.params._to,
     event.params._quantity
 )
+createIssuanceEntity.save()
 
-let managerE: Manager;
 
-let createFeeEntity = createFee(createGenericId(event),
+let feeEntity = createFee(createGenericId(event),
   timestamp, event.params._managerFee,
   event.params._protocolFee
 )
+feeEntity.save()
 
-if (!Manager.load(fetchManager(setTokenAddress))) {
-  managerE = createManager(fetchManager(setTokenAddress), setTokenAddress, [])
-} else {
-  managerE = createManager(
-    fetchManager(setTokenAddress), setTokenAddress, [])
-  }
+let currentManager = Manager.load(fetchManager(setTokenAddress))
 
+if (currentManager == null) {
+  currentManager = createManager(fetchManager(setTokenAddress), setTokenAddress, [])
+} 
+let currentManagersFeeHistory = currentManager.feeAccrualHistory;
 
+currentManager.save()
+
+let issuerEntity = Issuer.load(id.toHexString())
+if (issuerEntity == null) {
+  issuerEntity = createIssuer(event.params._issuer)
+}
+
+let issuersTokensIssued = issuerEntity.setTokensIssued
+issuersTokensIssued.push(createIssuanceEntity.id)
+issuerEntity.setTokensIssued = issuersTokensIssued
+issuerEntity.save()
+
+let setTokenEntity: SetToken;
 if (!SetToken.load(setTokenAddress.toHexString())) {
-  let setTokenEntity = new SetToken(setTokenAddress.toHexString())
+  setTokenEntity = new SetToken(setTokenAddress.toHexString())
   setTokenEntity.address = setTokenAddress
   setTokenEntity.name = `SetToken::${setTokenAddress.toHexString()}`
-  setTokenEntity.totalSupply = fetchTokenTotalSupply(setTokenAddress)
+  setTokenEntity.manager = currentManager.id
+  setTokenEntity.issuer = issuerEntity.id
+  setTokenEntity.issuances = []
+  setTokenEntity.totalSupply = BigInt.fromI32(0);
   setTokenEntity.save()
 }
 
 
 
-if (!Issuer.load(id.toHexString())) {
-  let issuerEntity = new Issuer(id.toHexString());
-  issuerEntity.address = id;
- issuerEntity.save()
-}
-managerE.save()
-createFeeEntity.save()
-createIssuanceEntity.save();
+
 
 }
 
