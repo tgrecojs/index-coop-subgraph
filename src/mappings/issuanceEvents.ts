@@ -63,7 +63,14 @@ const createFee = (id: string, timestamp: BigInt, managerPayout: BigInt, protoco
 const createManager = (id: string, address: Address, feeAccrualHistory: Fee[]): Manager => {
   let manager = new Manager(id)
   manager.address = address;
-  return manager
+  manager.feeAccrualHistory = []
+  return manager as Manager
+}
+
+const updateManager = (id: string, address: Address, 
+  fee: Fee): Manager => {
+  let manager = Manager.load(id)
+  return manager as Manager
 }
 
 const createIssuance = (id: string, buyerAddress: Bytes, quantity: BigInt): TokenIssuance => {
@@ -82,32 +89,22 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   let setToken: SetToken;
   let createIssuanceEntity = createIssuance(createGenericId(event),
     event.params._to,
-    event.params._quantity,
-   
+    event.params._quantity
 )
 
 let managerE: Manager;
 
-
 let createFeeEntity = createFee(createGenericId(event),
   timestamp, event.params._managerFee,
   event.params._protocolFee
-
 )
 
-
 if (!Manager.load(fetchManager(setTokenAddress))) {
-  managerE = createManager(
-    fetchManager(setTokenAddress).toString(),
-  setTokenAddress,
-  []
-  )
+  managerE = createManager(fetchManager(setTokenAddress), setTokenAddress, [])
 } else {
   managerE = createManager(
-    fetchManager(setTokenAddress).toString(),
- setTokenAddress,
-  []
-  )}
+    fetchManager(setTokenAddress), setTokenAddress, [])
+  }
 
 
 if (!SetToken.load(setTokenAddress.toHexString())) {

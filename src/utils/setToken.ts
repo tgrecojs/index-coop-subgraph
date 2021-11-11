@@ -28,7 +28,7 @@ export function fetchTokenTotalSupply(tokenAddress: Address): BigInt {
     if(!result.reverted) {
 
     }
-    return result.value.toString()
+    return result.value.toHexString()
   }
 
   export function getIssuerAddress(tokenAddress: Address): string {
