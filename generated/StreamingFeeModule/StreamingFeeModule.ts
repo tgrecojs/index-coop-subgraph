@@ -262,7 +262,9 @@ export class InitializeCall__Inputs {
   }
 
   get _settings(): InitializeCall_settingsStruct {
-    return this._call.inputValues[1].value.toTuple() as InitializeCall_settingsStruct;
+    return changetype<InitializeCall_settingsStruct>(
+      this._call.inputValues[1].value.toTuple()
+    );
   }
 }
 

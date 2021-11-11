@@ -145,8 +145,16 @@ dataSources:
         - SetToken
         - Issuer
       abis:
+        - name: BasicIssuanceModule
+          file: ./abis/BasicIssuanceModule.json
         - name: DebtIssuanceModule
           file: ./abis/DebtIssuanceModule.json
+        - name: FlexibleLeverageStrategyAdapter
+          file: abis/FlexibleLeverageStrategyAdapter.json
+        - name: SetToken
+          file: ./abis/SetToken.json
+        - name: StreamingFeeModule
+          file: abis/StreamingFeeModule.json
       eventHandlers:
         - event: FeeRecipientUpdated(indexed address,address)
           handler: handleFeeRecipientUpdated
