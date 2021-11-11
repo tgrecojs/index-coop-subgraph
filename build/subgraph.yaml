@@ -11,7 +11,7 @@ dataSources:
       startBlock: 12035541
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - AnyoneCallableUpdated
@@ -62,7 +62,7 @@ dataSources:
       abis:
         - file: FlexibleLeverageStrategyExtension/abis/FlexibleLeverageStrategyExtension.json
           name: FlexibleLeverageStrategyExtension
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       entities:
         - AnyoneCallableUpdated
         - CallerStatusUpdated
@@ -115,7 +115,7 @@ dataSources:
     mapping:
       kind: ethereum/events
       language: wasm/assemblyscript
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       abis:
         - file: SetToken/abis/SetToken.json
           name: SetToken
@@ -134,7 +134,7 @@ dataSources:
       startBlock: 12028835
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - FeeRecipientUpdated
@@ -142,6 +142,8 @@ dataSources:
         - RedeemFeeUpdated
         - SetTokenIssued
         - SetTokenRedeemed
+        - SetToken
+        - Issuer
       abis:
         - name: DebtIssuanceModule
           file: DebtIssuanceModule/abis/DebtIssuanceModule.json
@@ -168,7 +170,7 @@ dataSources:
       startBlock: 12028835
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
         - StreamingFee

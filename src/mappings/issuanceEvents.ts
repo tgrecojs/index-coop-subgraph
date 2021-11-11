@@ -18,13 +18,14 @@ import {
   Fee,
   TokenIssuance,
 } from '../../generated/schema';
+import {SetToken as SetTokenContract} from '../../generated/SetToken/SetToken'
 
 import {
   contracts,
   findByAddress,
 } from '../../config';
 import { fetchManager, fetchTokenTotalSupply, fetchUnderlyingComponents } from '../utils/setToken';
-import { BigInt, Bytes, Entity, ethereum } from '@graphprotocol/graph-ts';
+import { Address, BigInt, ByteArray, Bytes, Entity, ethereum, log } from '@graphprotocol/graph-ts';
 
 export function handleFeeRecipientUpdated(
   event: FeeRecipientUpdatedEvent
@@ -63,7 +64,7 @@ const createFee = (id: string, timestamp: BigInt, managerPayout: BigInt, protoco
   return fee
 }
 
-const createManager = (id: string, address: Bytes, feeAccrualHistory: Fee[]): Manager => {
+const createManager = (id: string, address: Address, feeAccrualHistory: Fee[]): Manager => {
   let manager = new Manager(id)
   manager.address = address;
   return manager
@@ -98,19 +99,21 @@ let createFeeEntity = createFee(createGenericId(event),
 
 )
 
-if (!Manager.load(fetchManager(setTokenAddress).toHexString())) {
+
+if (!Manager.load(fetchManager(setTokenAddress))) {
   managerE = createManager(
-    fetchManager(setTokenAddress).toHexString(),
-   fetchManager(setTokenAddress),
+    fetchManager(setTokenAddress).toString(),
+  setTokenAddress,
   []
   )
 } else {
-  managerE = Manager.load(fetchManager(setTokenAddress).toHexString())
-  managerE.totalFees = managerE.totalFees + BigInt(event.params._managerFee)
-}
+  managerE = createManager(
+    fetchManager(setTokenAddress).toString(),
+ setTokenAddress,
+  []
+  )}
 
 
-let setTokenE: SetToken
 if (!SetToken.load(setTokenAddress.toHexString())) {
   let setTokenEntity = new SetToken(setTokenAddress.toHexString())
   setTokenEntity.address = setTokenAddress
@@ -118,11 +121,11 @@ if (!SetToken.load(setTokenAddress.toHexString())) {
   let icTokenObj = contracts.filter(x => x.rootAddress === event.params._setToken.toHexString());
   setTokenEntity.name = icTokenObj[0].name;
   setTokenEntity.totalSupply = fetchTokenTotalSupply(setTokenAddress)
-  setTokenE = setTokenEntity;
+  setTokenEntity.save()
 } else {
   let exisitingToken = SetToken.load(setTokenAddress.toHexString())
   exisitingToken.totalSupply = fetchTokenTotalSupply(setTokenAddress)
-  setTokenE = exisitingToken;
+  exisitingToken.save()
 }
 
 
@@ -141,7 +144,6 @@ if (!Issuer.load(id.toHexString())) {
 managerE.save()
 createFeeEntity.save()
 createIssuanceEntity.save();
-setToken.save()
 
 }
 

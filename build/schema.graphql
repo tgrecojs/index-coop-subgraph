@@ -21,6 +21,7 @@ type Transfer @entity {
   from: Bytes
   to: Bytes
   value: BigInt!
+  setToken: SetToken!
   timestamp: BigInt!
 }
 
@@ -42,15 +43,52 @@ type RedeemFeeUpdated @entity {
   _newRedeemFee: BigInt! # uint256
 }
 
+type Issuer @entity {
+  id: ID!
+  address: Bytes!
+  setTokensIssued: [TokenIssuance!]!
+}
+type TokenIssuance @entity {
+  id: ID!
+  buyerAddress: Bytes!
+  setToken: SetToken! @derivedFrom (field: "issuances")
+  quantity: BigInt!
+}
+type SetToken @entity {
+  id: ID!
+  address: Bytes!
+  name: String!
+  manager: Manager!
+  issuer: Issuer!
+  issuances: [TokenIssuance!]
+  totalSupply: BigInt!
+}
+
+type Fee @entity {
+  id: ID!
+  timestamp: BigInt!
+  manager: Manager! @derivedFrom (field:"feeAccrualHistory")
+  managerPayout: BigInt
+  protocolPayout: BigInt
+}
+
+type Manager @entity {
+  id: ID!
+  address: Bytes!
+  feeAccrualHistory: [Fee!]
+  totalFees: BigInt!
+  setToken: SetToken!
+}
+
 type SetTokenIssued @entity {
   id: ID!
-  _setToken: Bytes! # address
-  _issuer: Bytes! # address
-  _to: Bytes! # address
+  setToken: SetToken! # address
+  issuer: Issuer! # address
+  purchaser: Bytes! # address
   _hookContract: Bytes! # address
-  _quantity: BigInt! # uint256
-  _managerFee: BigInt! # uint256
-  _protocolFee: BigInt! # uint256
+  quantity: BigInt! # uint256
+  manager: Manager!
+  protocolFee: BigInt! # uint256
 }
 
 type SetTokenRedeemed @entity {
