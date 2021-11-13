@@ -27,9 +27,10 @@ import {
   IncentiveSettingsUpdated,
   MethodologySettingsUpdated,
   RebalanceIterated,
-  Rebalanced,
   RipcordCalled,
-  Transfer as TransferEntity
+  Transfer as TransferEntity,
+  Rebalance,
+  Transaction
 } from "../../generated/schema"
 import {
   Approval,
@@ -201,15 +202,18 @@ export function handleRebalanceIterated(event: RebalanceIteratedEvent): void {
   entity.save()
 }
 
-export function handleRebalanced(event: RebalancedEvent): void {
-  let entity = new Rebalanced(
+export function handleRebalanceEvent(event: RebalancedEvent): void {
+  let entity = new Rebalance(
     event.transaction.hash.toHex() + "-" + event.logIndex.toString()
   )
-  entity.gasLimit = event.transaction.gasLimit;
+  const txn = new Transaction(event.transaction.hash.toHex() + '--' + 'rebalance-txn')
+  txn.timestamp = event.block.timestamp;
+  txn.gasLimit = event.transaction.gasLimit;
+  txn.gasPriceInGwei = event.transaction.gasPrice;
+  txn.save()
+  entity.transaction = txn.id;
   entity.transactionHash = event.transaction.hash;
-  entity.gasPriceInGwei = event.transaction.gasPrice;
 
-  entity.timestamp = event.block.timestamp
   entity.currentLeverageRatio = event.params._currentLeverageRatio
   entity.newLeverageRatio = event.params._newLeverageRatio
   entity.chunkRebalanceNotional = event.params._chunkRebalanceNotional

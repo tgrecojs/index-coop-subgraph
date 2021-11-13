@@ -1,6 +1,6 @@
 import { Bytes } from "@graphprotocol/graph-ts"
 
-export class SetToken {
+interface ICTokenContracts {
   name: string
   rootAddress: string
   issuanceAbiName: string
@@ -9,7 +9,8 @@ export class SetToken {
   streamingFeeAbi: string
   streamingFeeAddress: string
 }
-export let contracts: SetToken[] = [
+
+export let contracts: ICTokenContracts[] = [
   {
     name: 'DPI Contract',
     rootAddress: '0x1494ca1f11d487c2bbe4543e90080aeba4ba3c2b',
@@ -27,6 +28,9 @@ export let contracts: SetToken[] = [
     issuanceAddress: '0x39F024d621367C044BacE2bf0Fb15Fb3612eCB92',
     streamingFeeAbi: './abis/StreamingFeeModule.json',
     streamingFeeAddress: '0x08f866c74205617B6F3903EF481798EcED10cDEC',
+    // componentsAddress:
+    //   ["0x39AA39c021dfbaE8faC545936693aC917d5E7563", 
+    //   "0x4ddc2d193948926d02f9b1fe9e1daa0718270ed5"]
   },
   {
     name: 'BTC2xFLI Contract',

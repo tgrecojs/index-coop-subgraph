@@ -12,6 +12,8 @@ export function fetchTokenTotalSupply(tokenAddress: Address): BigInt {
     return totalSupplyResult.value
   }
 
+  export const bindTokenAddress = (address: Address): SetToken => SetToken.bind(address);
+
   export function fetchUnderlyingComponents(tokenAddress: Address): Address[] {
     let contract = SetToken.bind(tokenAddress)
     let tokenComponentsResult = contract.try_getComponents()

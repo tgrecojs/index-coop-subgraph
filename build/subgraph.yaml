@@ -22,7 +22,7 @@ dataSources:
         - IncentiveSettingsUpdated
         - MethodologySettingsUpdated
         - RebalanceIterated
-        - Rebalanced
+        - Rebalance
         - RipcordCalled
       abis:
         - name: FlexibleLeverageStrategyAdapter
@@ -45,7 +45,7 @@ dataSources:
         - event: RebalanceIterated(uint256,uint256,uint256,uint256)
           handler: handleRebalanceIterated
         - event: Rebalanced(uint256,uint256,uint256,uint256)
-          handler: handleRebalanced
+          handler: handleRebalanceEvent
         - event: RipcordCalled(uint256,uint256,uint256,uint256)
           handler: handleRipcordCalled
       file: FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter.wasm
@@ -75,7 +75,7 @@ dataSources:
         - IncentiveSettingsUpdated
         - MethodologySettingsUpdated
         - RebalanceIterated
-        - Rebalanced
+        - Rebalance
         - RipcordCalled
       eventHandlers:
         - event: AnyoneCallableUpdated(indexed bool)
@@ -101,7 +101,7 @@ dataSources:
         - event: RebalanceIterated(uint256,uint256,uint256,uint256)
           handler: handleRebalanceIterated
         - event: Rebalanced(uint256,uint256,uint256,uint256)
-          handler: handleRebalanced
+          handler: handleRebalanceEvent
         - event: RipcordCalled(uint256,uint256,uint256,uint256)
           handler: handleRipcordCalled
       file: FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter.wasm

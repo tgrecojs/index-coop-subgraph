@@ -10,17 +10,17 @@ import {
   FeeRecipientUpdated,
   IssueFeeUpdated,
   RedeemFeeUpdated,
-  SetTokenIssued,
-  SetTokenRedeemed,
   Issuer,
   SetToken,
+  SetTokenRedeemed,
   Manager,
   Fee,
   TokenIssuance,
+  Transaction,
 } from '../../generated/schema';
-import {SetToken as SetTokenContract} from '../../generated/SetToken/SetToken'
+import { SetToken as SetTokenContract } from '../../generated/SetToken/SetToken'
 
-import { fetchManager, fetchTokenTotalSupply, fetchUnderlyingComponents } from '../utils/setToken';
+import { bindTokenAddress, fetchManager, fetchTokenTotalSupply, fetchUnderlyingComponents } from '../utils/setToken';
 import { Address, BigInt, ByteArray, Bytes, Entity, ethereum, log } from '@graphprotocol/graph-ts';
 
 export function handleFeeRecipientUpdated(
@@ -60,7 +60,7 @@ const createFee = (id: string, timestamp: BigInt, managerPayout: BigInt, protoco
   return fee
 }
 
-const createManager = (id: string, address: Address, feeAccrualHistory: Fee[]): Manager => {
+const createManager = (id: string, address: Address): Manager => {
   let manager = new Manager(id)
   manager.address = address;
   manager.feeAccrualHistory = []
@@ -68,7 +68,7 @@ const createManager = (id: string, address: Address, feeAccrualHistory: Fee[]): 
   return manager
 }
 
-const updateManager = (id: string, address: Address, 
+const updateManager = (id: string, address: Address,
   fee: Fee): Manager => {
   let manager = Manager.load(id)
   return manager as Manager
@@ -83,6 +83,21 @@ const createIssuance = (id: string, buyerAddress: Bytes, quantity: BigInt): Toke
 const createGenericId = (event: ethereum.Event): string =>
   '' + event.transaction.hash.toHex() + '-' + event.logIndex.toString() + '';
 
+/**
+ * We should pull out all "create" functions and place them elsewhere
+ * This should also entail each function being assessed for the data it is creating so that:
+ * 1. the properties being save adhere to the desired index coop graph specificiation
+ * 2. a. the codebase follows the D.R.Y. principle of programming. Each function is self-sufficient in regards to saving data. 
+ *    b. from there, entities should be shared via the entity.id relationship, as opposed to duplicating logic throughout codebase
+ */
+
+// Update this to include additional info
+const createTxn = (id: string, timestamp: BigInt): Transaction => {
+  let txnObject = new Transaction(id)
+  txnObject.timestamp = timestamp;
+  return txnObject
+}
+
 const createIssuer = (address: Address): Issuer => {
   let newIssuer = new Issuer(address.toHexString())
   newIssuer.address = address;
@@ -93,53 +108,74 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   let id = event.params._issuer
   let setTokenAddress = event.params._setToken
   let timestamp = event.block.timestamp;
-  let createIssuanceEntity = createIssuance(createGenericId(event),
-    event.params._to,
-    event.params._quantity
-)
-createIssuanceEntity.save()
+  let eventTxnData = event.transaction;
 
 
-let feeEntity = createFee(createGenericId(event),
-  timestamp, event.params._managerFee,
-  event.params._protocolFee
-)
-feeEntity.save()
+  const txn = createTxn(createGenericId(event), timestamp)
 
-let currentManager = Manager.load(fetchManager(setTokenAddress))
+  txn.gasLimit = eventTxnData.gasLimit;
+  txn.gasPriceInGwei = eventTxnData.gasPrice;
 
-if (currentManager == null) {
-  currentManager = createManager(fetchManager(setTokenAddress), setTokenAddress, [])
-} 
-let currentManagersFeeHistory = currentManager.feeAccrualHistory;
+  txn.save()
 
-currentManager.save()
+  log.debug('txnData:: saved', [txn.id])
+  let feeEntity = createFee(createGenericId(event),
+    timestamp, event.params._managerFee,
+    event.params._protocolFee
+  )
 
-let issuerEntity = Issuer.load(id.toHexString())
-if (issuerEntity == null) {
-  issuerEntity = createIssuer(event.params._issuer)
-}
+  let issuanceEntity =
+    createIssuance(createGenericId(event), event.params._to, event.params._quantity)
+  issuanceEntity.transaction = txn.id;
 
-let issuersTokensIssued = issuerEntity.setTokensIssued
-issuersTokensIssued.push(createIssuanceEntity.id)
-issuerEntity.setTokensIssued = issuersTokensIssued
-issuerEntity.save()
+  issuanceEntity.save();
 
-let setTokenEntity: SetToken;
-if (!SetToken.load(setTokenAddress.toHexString())) {
-  setTokenEntity = new SetToken(setTokenAddress.toHexString())
-  setTokenEntity.address = setTokenAddress
-  setTokenEntity.name = `SetToken::${setTokenAddress.toHexString()}`
-  setTokenEntity.manager = currentManager.id
-  setTokenEntity.issuer = issuerEntity.id
-  setTokenEntity.issuances = []
-  setTokenEntity.totalSupply = BigInt.fromI32(0);
+
+
+  let currentManager = Manager.load(fetchManager(setTokenAddress))
+
+  if (currentManager == null) {
+    currentManager = createManager(fetchManager(setTokenAddress), setTokenAddress)
+  }
+
+  currentManager.save()
+  log.debug('currentManager:: saved', [currentManager.id])
+
+  feeEntity.manager = currentManager.id;
+  feeEntity.save()
+
+  let issuerEntity = Issuer.load(id.toHexString())
+  if (issuerEntity == null) {
+    issuerEntity = createIssuer(event.params._issuer)
+  }
+
+  let issuersTokensIssued = issuerEntity.setTokensIssued
+  issuersTokensIssued.push(issuanceEntity.id)
+  issuerEntity.setTokensIssued = issuersTokensIssued
+  issuerEntity.save()
+  log.debug('issuerEntity saved::', [issuerEntity.id])
+
+
+  let setTokenEntity = SetToken.load(setTokenAddress.toHexString())
+  if (setTokenEntity == null) {
+    setTokenEntity = new SetToken(setTokenAddress.toHexString())
+    setTokenEntity.address = setTokenAddress
+    setTokenEntity.name = bindTokenAddress(setTokenAddress).name()
+    setTokenEntity.manager = currentManager.id
+    setTokenEntity.issuer = issuerEntity.id
+    setTokenEntity.issuances = []
+    setTokenEntity.totalSupply = BigInt.fromI32(0);
+  }
+
+
+
+  let existingIssuances = setTokenEntity.issuances;
+
+  existingIssuances.push(issuanceEntity.id);
+
+  setTokenEntity.issuances = existingIssuances;
   setTokenEntity.save()
-}
-
-
-
-
+  log.debug('setTokenEntity saved::', [setTokenEntity.name])
 
 }
 

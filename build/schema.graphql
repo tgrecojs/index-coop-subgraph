@@ -11,8 +11,9 @@ type CallerStatusUpdated @entity {
 
 type Transaction @entity {
   id: ID!
-  from: Bytes!
-  to: Bytes!
+  timestamp: BigInt!
+  gasLimit: BigInt
+  gasPriceInGwei: BigInt
 }
 
 type Transfer @entity {
@@ -51,8 +52,9 @@ type Issuer @entity {
 type TokenIssuance @entity {
   id: ID!
   buyerAddress: Bytes!
-  setToken: SetToken! @derivedFrom (field: "issuances")
+  setToken: SetToken!
   quantity: BigInt!
+  transaction: Transaction!
 }
 
 type SetToken @entity {
@@ -61,16 +63,17 @@ type SetToken @entity {
   name: String!
   manager: Manager!
   issuer: Issuer!
-  issuances: [TokenIssuance!]
+  issuances: [TokenIssuance!]!
   totalSupply: BigInt!
 }
 
 type Fee @entity {
   id: ID!
   timestamp: BigInt!
-  manager: Manager! @derivedFrom (field:"feeAccrualHistory")
+  manager: Manager! 
   managerPayout: BigInt
   protocolPayout: BigInt
+  transaction: Transaction!
 }
 
 type Manager @entity {
@@ -182,15 +185,13 @@ type RebalanceIterated @entity {
   totalRebalanceNotional: BigInt! # uint256
 }
 
-type Rebalanced @entity {
+type Rebalance @entity {
   id: ID!
-  timestamp: BigInt!
   currentLeverageRatio: BigInt! # uint256
   newLeverageRatio: BigInt! # uint256
   chunkRebalanceNotional: BigInt! # uint256
   totalRebalanceNotional: BigInt! # uint256
-  gasLimit: BigInt!
-  gasPriceInGwei: BigInt!
+  transaction: Transaction!
   transactionHash: Bytes!
 }
 
