@@ -794,6 +794,7 @@ export class Manager extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("address", Value.fromBytes(Bytes.empty()));
+    this.set("feeAccrualHistory", Value.fromStringArray(new Array(0)));
     this.set("setToken", Value.fromString(""));
   }
 
@@ -832,24 +833,13 @@ export class Manager extends Entity {
     this.set("address", Value.fromBytes(value));
   }
 
-  get feeAccrualHistory(): Array<string> | null {
+  get feeAccrualHistory(): Array<string> {
     let value = this.get("feeAccrualHistory");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
+    return value!.toStringArray();
   }
 
-  set feeAccrualHistory(value: Array<string> | null) {
-    if (!value) {
-      this.unset("feeAccrualHistory");
-    } else {
-      this.set(
-        "feeAccrualHistory",
-        Value.fromStringArray(<Array<string>>value)
-      );
-    }
+  set feeAccrualHistory(value: Array<string>) {
+    this.set("feeAccrualHistory", Value.fromStringArray(value));
   }
 
   get totalFees(): BigInt | null {

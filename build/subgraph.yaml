@@ -14,17 +14,11 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - AnyoneCallableUpdated
-        - CallerStatusUpdated
-        - Disengaged
-        - Engaged
-        - ExecutionSettingsUpdated
-        - IncentiveSettingsUpdated
-        - MethodologySettingsUpdated
-        - RebalanceIterated
         - Rebalance
         - RipcordCalled
       abis:
+        - name: SetToken
+          file: FlexibleLeverageStrategyAdapter/abis/SetToken.json
         - name: FlexibleLeverageStrategyAdapter
           file: FlexibleLeverageStrategyAdapter/abis/FlexibleLeverageStrategyAdapter.json
       eventHandlers:
@@ -43,7 +37,7 @@ dataSources:
         - event: MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)
           handler: handleMethodologySettingsUpdated
         - event: RebalanceIterated(uint256,uint256,uint256,uint256)
-          handler: handleRebalanceIterated
+          handler: handleRebalanceEvent
         - event: Rebalanced(uint256,uint256,uint256,uint256)
           handler: handleRebalanceEvent
         - event: RipcordCalled(uint256,uint256,uint256,uint256)
@@ -60,21 +54,12 @@ dataSources:
       kind: ethereum/events
       language: wasm/assemblyscript
       abis:
-        - file: FlexibleLeverageStrategyExtension/abis/FlexibleLeverageStrategyExtension.json
-          name: FlexibleLeverageStrategyExtension
+        - name: FlexibleLeverageStrategyExtension
+          file: FlexibleLeverageStrategyExtension/abis/FlexibleLeverageStrategyExtension.json
+        - name: SetToken
+          file: FlexibleLeverageStrategyExtension/abis/SetToken.json
       apiVersion: 0.0.5
       entities:
-        - AnyoneCallableUpdated
-        - CallerStatusUpdated
-        - Disengaged
-        - Engaged
-        - ExchangeAdded
-        - ExchangeRemoved
-        - ExchangeUpdated
-        - ExecutionSettingsUpdated
-        - IncentiveSettingsUpdated
-        - MethodologySettingsUpdated
-        - RebalanceIterated
         - Rebalance
         - RipcordCalled
       eventHandlers:
@@ -99,7 +84,7 @@ dataSources:
         - event: MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)
           handler: handleMethodologySettingsUpdated
         - event: RebalanceIterated(uint256,uint256,uint256,uint256)
-          handler: handleRebalanceIterated
+          handler: handleRebalanceEvent
         - event: Rebalanced(uint256,uint256,uint256,uint256)
           handler: handleRebalanceEvent
         - event: RipcordCalled(uint256,uint256,uint256,uint256)
@@ -117,8 +102,8 @@ dataSources:
       language: wasm/assemblyscript
       apiVersion: 0.0.5
       abis:
-        - file: SetToken/abis/SetToken.json
-          name: SetToken
+        - name: SetToken
+          file: SetToken/abis/SetToken.json
       entities:
         - Transfer
       eventHandlers:
@@ -137,10 +122,6 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - FeeRecipientUpdated
-        - IssueFeeUpdated
-        - RedeemFeeUpdated
-        - SetTokenIssued
         - SetTokenRedeemed
         - SetToken
         - Issuer
@@ -181,15 +162,14 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - StreamingFee
+        - Fee
+        - Manager
       abis:
         - name: StreamingFeeModule
           file: StreamingFeeModule/abis/StreamingFeeModule.json
+        - name: SetToken
+          file: StreamingFeeModule/abis/SetToken.json
       eventHandlers:
         - event: FeeActualized(indexed address,uint256,uint256)
           handler: handleFeeActualized
-        - event: StreamingFeeUpdated(indexed address,uint256)
-          handler: handleStreamingFeeUpdated
-        - event: FeeRecipientUpdated(indexed address,address)
-          handler: handleFeeReciepientUpdated
       file: StreamingFeeModule/StreamingFeeModule.wasm

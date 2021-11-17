@@ -52,7 +52,7 @@ export function handleRedeemFeeUpdated(event: RedeemFeeUpdatedEvent): void {
   entity.save();
 }
 
-const createFee = (id: string, timestamp: BigInt, managerPayout: BigInt, protocolPayout: BigInt): Fee => {
+export const createFee = (id: string, timestamp: BigInt, managerPayout: BigInt, protocolPayout: BigInt): Fee => {
   let fee = new Fee(id)
   fee.timestamp = timestamp;
   fee.managerPayout = managerPayout;
@@ -60,7 +60,7 @@ const createFee = (id: string, timestamp: BigInt, managerPayout: BigInt, protoco
   return fee
 }
 
-const createManager = (id: string, address: Address): Manager => {
+export const createManager = (id: string, address: Address): Manager => {
   let manager = new Manager(id)
   manager.address = address;
   manager.feeAccrualHistory = []
@@ -110,7 +110,6 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   let timestamp = event.block.timestamp;
   let eventTxnData = event.transaction;
 
-
   const txn = createTxn(createGenericId(event), timestamp)
 
   txn.gasLimit = eventTxnData.gasLimit;
@@ -137,8 +136,15 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   if (currentManager == null) {
     currentManager = createManager(fetchManager(setTokenAddress), setTokenAddress)
   }
-
+  // A. managerFees is equal to current feeAccrualHistory array
+  let managerFees = currentManager.feeAccrualHistory;
+  // B. Use managerFees variable to update manager's feeAccrualHistoryArray to include the latest Fee.id
+  managerFees.push(feeEntity.id)
+  // C. Set updated feeAccrualHistory onto our Manager entity by setting currentManager.feeAccrualHistory = managerFees
+  currentManager.feeAccrualHistory = managerFees;
+  // D. currentManager.feeAccrualHistory is now set to the managerFees array (and therefore includes the latest Fee.id)
   currentManager.save()
+
   log.debug('currentManager:: saved', [currentManager.id])
 
   feeEntity.manager = currentManager.id;

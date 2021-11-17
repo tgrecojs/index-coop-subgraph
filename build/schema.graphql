@@ -79,7 +79,7 @@ type Fee @entity {
 type Manager @entity {
   id: ID!
   address: Bytes!
-  feeAccrualHistory: [Fee!]
+  feeAccrualHistory: [Fee!]!
   totalFees: BigInt
   setToken: SetToken!
 }

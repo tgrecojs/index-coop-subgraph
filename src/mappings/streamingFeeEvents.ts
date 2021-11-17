@@ -1,38 +1,29 @@
-import { StreamingFee } from '../../generated/schema';
+import { Fee, Manager } from '../../generated/schema';
 import { FeeActualized } from '../../generated/StreamingFeeModule/StreamingFeeModule';
 import { StreamingFeeUpdated } from '../../generated/StreamingFeeModule/StreamingFeeModule';
 import { FeeRecipientUpdated } from '../../generated/StreamingFeeModule/StreamingFeeModule';
+import { fetchManager } from '../utils/setToken';
+import { createFee, createManager } from './issuanceEvents';
 
 export function handleFeeActualized(event: FeeActualized): void {
-  let entity = new StreamingFee(
+  let entity = new Fee(
     event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   );
+  let setTokenAddress = event.params._setToken
 
-  entity.timestamp = event.block.timestamp;
-  entity.setToken = event.params._setToken;
-  entity.managerFee = event.params._managerFee;
-  entity.protocolFee = event.params._protocolFee;
-  entity.save();
-}
+  let feeEntity = createFee(event.transaction.hash.toHex() + '-' + event.logIndex.toString(), event.block.timestamp, event.params._managerFee, event.params._protocolFee)
 
-export function handleStreamingFeeUpdated(event: StreamingFeeUpdated): void {
-  let entity = new StreamingFee(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
-  );
+  let currentManager = Manager.load(fetchManager(setTokenAddress))
 
-  entity.timestamp = event.block.timestamp;
-  entity.setToken = event.params._setToken;
-  entity.newStreamingFee = event.params._newStreamingFee;
-  entity.save();
-}
+  if (currentManager == null) {
+    currentManager = createManager(fetchManager(setTokenAddress), setTokenAddress)
+  }
+  let managerFees = currentManager.feeAccrualHistory;
+  managerFees.push(feeEntity.id)
+  currentManager.feeAccrualHistory = managerFees;
 
-export function handleFeeReciepientUpdated(event: FeeRecipientUpdated): void {
-  let entity = new StreamingFee(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
-  );
+  currentManager.save()
+  feeEntity.manager = currentManager.id;
 
-  entity.timestamp = event.block.timestamp;
-  entity.setToken = event.params._setToken;
-  entity.newFeeRecipient = event.params._newFeeRecipient;
-  entity.save();
+  feeEntity.save();
 }
