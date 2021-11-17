@@ -155,10 +155,14 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
     issuerEntity = createIssuer(event.params._issuer)
   }
 
+  // Same process ass managerFees array above.
   let issuersTokensIssued = issuerEntity.setTokensIssued
+  // push in issuanceEntity.id
   issuersTokensIssued.push(issuanceEntity.id)
+  // set updated array to equal new .setTokensIssued array
   issuerEntity.setTokensIssued = issuersTokensIssued
   issuerEntity.save()
+
   log.debug('issuerEntity saved::', [issuerEntity.id])
 
 
@@ -167,19 +171,23 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
     setTokenEntity = new SetToken(setTokenAddress.toHexString())
     setTokenEntity.address = setTokenAddress
     setTokenEntity.name = bindTokenAddress(setTokenAddress).name()
+    // NESTED ENTITY --> set using entity.id
     setTokenEntity.manager = currentManager.id
+    // NESTED ENTITY --> set using entity.id
     setTokenEntity.issuer = issuerEntity.id
     setTokenEntity.issuances = []
     setTokenEntity.totalSupply = BigInt.fromI32(0);
   }
 
 
-
+  /** Same process for updating nested managerFees & setTokensIssued arrays */
+  // A. create variable equal to the current .issuances array
   let existingIssuances = setTokenEntity.issuances;
-
+  // B. push the most recent issuanceEntity.id into this array
   existingIssuances.push(issuanceEntity.id);
-
+  // C. reassign setTokenEntity.issuances to be equal to updated array (containing the entity.id added above)
   setTokenEntity.issuances = existingIssuances;
+  // D. save SetToken
   setTokenEntity.save()
   log.debug('setTokenEntity saved::', [setTokenEntity.name])
 
