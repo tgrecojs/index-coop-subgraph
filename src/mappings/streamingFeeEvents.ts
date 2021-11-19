@@ -18,9 +18,6 @@ export function handleFeeActualized(event: FeeActualized): void {
   if (currentManager == null) {
     currentManager = createManager(fetchManager(setTokenAddress), setTokenAddress)
   }
-  let managerFees = currentManager.feeAccrualHistory;
-  managerFees.push(feeEntity.id)
-  currentManager.feeAccrualHistory = managerFees;
 
   currentManager.save()
   feeEntity.manager = currentManager.id;

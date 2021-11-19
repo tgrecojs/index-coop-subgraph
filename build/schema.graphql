@@ -11,6 +11,8 @@ type CallerStatusUpdated @entity {
 
 type Transaction @entity {
   id: ID!
+  from: Bytes
+  to: Bytes
   timestamp: BigInt!
   gasLimit: BigInt
   gasPriceInGwei: BigInt
@@ -52,8 +54,9 @@ type Issuer @entity {
 type TokenIssuance @entity {
   id: ID!
   buyerAddress: Bytes!
-  setToken: SetToken!
+  setToken: SetToken! @derivedFrom(field: "issuances")
   quantity: BigInt!
+  issuer: Issuer!
   transaction: Transaction!
 }
 
@@ -63,44 +66,59 @@ type SetToken @entity {
   name: String!
   manager: Manager!
   issuer: Issuer!
-  issuances: [TokenIssuance!]!
+  issuances: [TokenIssuance!]! @derivedFrom(field: "setToken")
   totalSupply: BigInt!
+  rebalances: [Rebalance!]! @derivedFrom(field: "setToken")
+  redemptions: [TokenRedemption!]! @derivedFrom(field: "setToken")
 }
 
 type Fee @entity {
   id: ID!
   timestamp: BigInt!
-  manager: Manager! 
+  manager: Manager!
   managerPayout: BigInt
   protocolPayout: BigInt
   transaction: Transaction!
 }
 
+type RebalanceDetails @entity {
+  id: ID!
+  currentLeverageRatio: BigInt! # uint256
+  newLeverageRatio: BigInt! # uint256
+  chunkRebalanceNotional: BigInt! # uint256
+  totalRebalanceNotional: BigInt! # uint256
+}
+
+type Rebalance @entity {
+  id: ID!
+  setToken: SetToken! @derivedFrom(field: "rebalances")
+  rebalanceDetails: RebalanceDetails!
+  transaction: Transaction!
+  transactionHash: Bytes!
+}
+
 type Manager @entity {
   id: ID!
   address: Bytes!
-  feeAccrualHistory: [Fee!]!
+  feeAccrualHistory: [Fee!]! @derivedFrom(field: "manager")
   totalFees: BigInt
   setToken: SetToken!
 }
 
-type SetTokenIssued @entity {
+type TokenRedemption @entity {
   id: ID!
-  setToken: SetToken! # address
-  issuer: Issuer! # address
-  purchaser: Bytes! # address
-  _hookContract: Bytes! # address
-  quantity: BigInt! # uint256
-  manager: Manager!
-  protocolFee: BigInt! # uint256
+  setToken: SetToken!  @derivedFrom(field: "redemptions")
+  redeemer: Bytes!
+  transaction: Transaction!
+  quantity: BigInt!
+  fee: Fee!
 }
-
 type SetTokenRedeemed @entity {
   id: ID!
   _setToken: Bytes! # address
   _redeemer: Bytes! # address
   _to: Bytes! # address
-  _quantity: BigInt! # uint256
+  transaction: Transaction!
   _managerFee: BigInt! # uint256
   _protocolFee: BigInt! # uint256
 }
@@ -109,7 +127,7 @@ type Disengaged @entity {
   id: ID!
   timestamp: BigInt!
   currentLeverageRatio: BigInt! # uint256
-  newLeverageRatio: BigInt! # uint256
+  newLeverageRatio: BigInt! # uint25
   chunkRebalanceNotional: BigInt! # uint256
   totalRebalanceNotional: BigInt! # uint256
 }
@@ -176,24 +194,6 @@ type MethodologySettingsUpdated @entity {
   _rebalanceInterval: BigInt! # uint256
 }
 
-type RebalanceIterated @entity {
-  id: ID!
-  timestamp: BigInt!
-  currentLeverageRatio: BigInt! # uint256
-  newLeverageRatio: BigInt! # uint256
-  chunkRebalanceNotional: BigInt! # uint256
-  totalRebalanceNotional: BigInt! # uint256
-}
-
-type Rebalance @entity {
-  id: ID!
-  currentLeverageRatio: BigInt! # uint256
-  newLeverageRatio: BigInt! # uint256
-  chunkRebalanceNotional: BigInt! # uint256
-  totalRebalanceNotional: BigInt! # uint256
-  transaction: Transaction!
-  transactionHash: Bytes!
-}
 
 type RipcordCalled @entity {
   id: ID!

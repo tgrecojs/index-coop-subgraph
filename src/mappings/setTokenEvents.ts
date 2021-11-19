@@ -1,3 +1,4 @@
+import { BigInt, ethereum } from "@graphprotocol/graph-ts";
 import {
   AnyoneCallableUpdated as AnyoneCallableUpdatedEvent,
   CallerStatusUpdated as CallerStatusUpdatedEvent,
@@ -8,7 +9,8 @@ import {
   MethodologySettingsUpdated as MethodologySettingsUpdatedEvent,
   RebalanceIterated as RebalanceIteratedEvent,
   Rebalanced as RebalancedEvent,
-  RipcordCalled as RipcordCalledEvent
+  RipcordCalled as RipcordCalledEvent,
+  Rebalanced
 } from "../../generated/FlexibleLeverageStrategyAdapter/FlexibleLeverageStrategyAdapter"
 import {
   ExchangeAdded as ExchangeAddedEvent,
@@ -26,11 +28,11 @@ import {
   ExecutionSettingsUpdated,
   IncentiveSettingsUpdated,
   MethodologySettingsUpdated,
-  RebalanceIterated,
   RipcordCalled,
   Transfer as TransferEntity,
   Rebalance,
-  Transaction
+  Transaction,
+  RebalanceDetails
 } from "../../generated/schema"
 import {
   Approval,
@@ -50,6 +52,7 @@ import {
   PositionMultiplierEdited,
   Transfer
 } from "../../generated/SetToken/SetToken"
+import { createGenericId } from "../utils";
 
 export function handleTransfer(event: Transfer): void {
   let id = event.transaction.hash.toHexString();
@@ -190,34 +193,44 @@ export function handleMethodologySettingsUpdated(
   entity.save()
 }
 
-export function handleRebalanceIterated(event: RebalanceIteratedEvent): void {
-  let entity = new RebalanceIterated(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  )
-  entity.timestamp = event.block.timestamp
-  entity.currentLeverageRatio = event.params._currentLeverageRatio
-  entity.newLeverageRatio = event.params._newLeverageRatio
-  entity.chunkRebalanceNotional = event.params._chunkRebalanceNotional
-  entity.totalRebalanceNotional = event.params._totalRebalanceNotional
-  entity.save()
+const createRebalanceDetails = (id: string, _currentLeverageRatio: BigInt, _newLeverageRatio: BigInt, _totalRebalanceNotional: BigInt, _chunkRebalanceNotional: BigInt ): RebalanceDetails => {
+  let entity = new RebalanceDetails(id)
+  entity.currentLeverageRatio= _currentLeverageRatio
+  entity.newLeverageRatio= _newLeverageRatio
+  entity.chunkRebalanceNotional= _chunkRebalanceNotional
+  entity.totalRebalanceNotional= _totalRebalanceNotional
+  return entity
 }
 
-export function handleRebalanceEvent(event: RebalancedEvent): void {
-  let entity = new Rebalance(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
-  )
+export function handleRebalanceIteratedEvent(event: RebalanceIteratedEvent): void {
+  const id = createGenericId(event);
+  let entity = new Rebalance(`${id}--${event.block.timestamp.toHexString()}`)
   const txn = new Transaction(event.transaction.hash.toHex() + '--' + 'rebalance-txn')
   txn.timestamp = event.block.timestamp;
   txn.gasLimit = event.transaction.gasLimit;
   txn.gasPriceInGwei = event.transaction.gasPrice;
   txn.save()
+  let rebalanceDetailsEntity = createRebalanceDetails(id, event.params._currentLeverageRatio, event.params._newLeverageRatio, event.params._totalRebalanceNotional, event.params._chunkRebalanceNotional);
+  rebalanceDetailsEntity.save()
   entity.transaction = txn.id;
   entity.transactionHash = event.transaction.hash;
+  entity.rebalanceDetails = rebalanceDetailsEntity.id
+  entity.save()
+}
 
-  entity.currentLeverageRatio = event.params._currentLeverageRatio
-  entity.newLeverageRatio = event.params._newLeverageRatio
-  entity.chunkRebalanceNotional = event.params._chunkRebalanceNotional
-  entity.totalRebalanceNotional = event.params._totalRebalanceNotional
+export function handleRebalanceEvent(event: RebalancedEvent): void {
+  const id = createGenericId(event);
+  let entity = new Rebalance(`${id}--${event.block.timestamp.toHexString()}`)
+  const txn = new Transaction(event.transaction.hash.toHex() + '--' + 'rebalance-txn')
+  txn.timestamp = event.block.timestamp;
+  txn.gasLimit = event.transaction.gasLimit;
+  txn.gasPriceInGwei = event.transaction.gasPrice;
+  txn.save()
+  let rebalanceDetailsEntity = createRebalanceDetails(id, event.params._currentLeverageRatio, event.params._newLeverageRatio, event.params._totalRebalanceNotional, event.params._chunkRebalanceNotional);
+  rebalanceDetailsEntity.save()
+  entity.transaction = txn.id;
+  entity.transactionHash = event.transaction.hash;
+  entity.rebalanceDetails = rebalanceDetailsEntity.id
   entity.save()
 }
 

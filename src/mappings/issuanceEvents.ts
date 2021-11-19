@@ -17,11 +17,13 @@ import {
   Fee,
   TokenIssuance,
   Transaction,
+  TokenRedemption,
 } from '../../generated/schema';
 import { SetToken as SetTokenContract } from '../../generated/SetToken/SetToken'
 
 import { bindTokenAddress, fetchManager, fetchTokenTotalSupply, fetchUnderlyingComponents } from '../utils/setToken';
 import { Address, BigInt, ByteArray, Bytes, Entity, ethereum, log } from '@graphprotocol/graph-ts';
+import { createGenericId } from '../utils';
 
 export function handleFeeRecipientUpdated(
   event: FeeRecipientUpdatedEvent
@@ -63,7 +65,6 @@ export const createFee = (id: string, timestamp: BigInt, managerPayout: BigInt, 
 export const createManager = (id: string, address: Address): Manager => {
   let manager = new Manager(id)
   manager.address = address;
-  manager.feeAccrualHistory = []
   manager.totalFees = BigInt.fromI32(0)
   return manager
 }
@@ -80,8 +81,6 @@ const createIssuance = (id: string, buyerAddress: Bytes, quantity: BigInt): Toke
   issuanceEntity.quantity = quantity
   return issuanceEntity
 }
-const createGenericId = (event: ethereum.Event): string =>
-  '' + event.transaction.hash.toHex() + '-' + event.logIndex.toString() + '';
 
 /**
  * We should pull out all "create" functions and place them elsewhere
@@ -92,28 +91,31 @@ const createGenericId = (event: ethereum.Event): string =>
  */
 
 // Update this to include additional info
-const createTxn = (id: string, timestamp: BigInt): Transaction => {
+const createTxn = (id: string, timestamp: BigInt, from: Bytes
+  , to: Bytes, gasLimit: BigInt, gasPrice: BigInt): Transaction => {
   let txnObject = new Transaction(id)
+  txnObject.from = from
+  txnObject.to = to
   txnObject.timestamp = timestamp;
+
+  txnObject.gasLimit = gasLimit;
+  txnObject.gasPriceInGwei = gasPrice;
   return txnObject
 }
 
 const createIssuer = (address: Address): Issuer => {
   let newIssuer = new Issuer(address.toHexString())
   newIssuer.address = address;
-  newIssuer.setTokensIssued = []
   return newIssuer
 }
+
 export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   let id = event.params._issuer
   let setTokenAddress = event.params._setToken
   let timestamp = event.block.timestamp;
   let eventTxnData = event.transaction;
 
-  const txn = createTxn(createGenericId(event), timestamp)
-
-  txn.gasLimit = eventTxnData.gasLimit;
-  txn.gasPriceInGwei = eventTxnData.gasPrice;
+  const txn = createTxn(createGenericId(event), timestamp, event.params._issuer, event.params._to, eventTxnData.gasLimit, eventTxnData.gasPrice)
 
   txn.save()
 
@@ -136,13 +138,6 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   if (currentManager == null) {
     currentManager = createManager(fetchManager(setTokenAddress), setTokenAddress)
   }
-  // A. managerFees is equal to current feeAccrualHistory array
-  let managerFees = currentManager.feeAccrualHistory;
-  // B. Use managerFees variable to update manager's feeAccrualHistoryArray to include the latest Fee.id
-  managerFees.push(feeEntity.id)
-  // C. Set updated feeAccrualHistory onto our Manager entity by setting currentManager.feeAccrualHistory = managerFees
-  currentManager.feeAccrualHistory = managerFees;
-  // D. currentManager.feeAccrualHistory is now set to the managerFees array (and therefore includes the latest Fee.id)
   currentManager.save()
 
   log.debug('currentManager:: saved', [currentManager.id])
@@ -155,12 +150,6 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
     issuerEntity = createIssuer(event.params._issuer)
   }
 
-  // Same process ass managerFees array above.
-  let issuersTokensIssued = issuerEntity.setTokensIssued
-  // push in issuanceEntity.id
-  issuersTokensIssued.push(issuanceEntity.id)
-  // set updated array to equal new .setTokensIssued array
-  issuerEntity.setTokensIssued = issuersTokensIssued
   issuerEntity.save()
 
   log.debug('issuerEntity saved::', [issuerEntity.id])
@@ -174,34 +163,44 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
     // NESTED ENTITY --> set using entity.id
     setTokenEntity.manager = currentManager.id
     // NESTED ENTITY --> set using entity.id
-    setTokenEntity.issuer = issuerEntity.id
-    setTokenEntity.issuances = []
     setTokenEntity.totalSupply = BigInt.fromI32(0);
   }
 
-
-  /** Same process for updating nested managerFees & setTokensIssued arrays */
-  // A. create variable equal to the current .issuances array
-  let existingIssuances = setTokenEntity.issuances;
-  // B. push the most recent issuanceEntity.id into this array
-  existingIssuances.push(issuanceEntity.id);
-  // C. reassign setTokenEntity.issuances to be equal to updated array (containing the entity.id added above)
-  setTokenEntity.issuances = existingIssuances;
   // D. save SetToken
   setTokenEntity.save()
   log.debug('setTokenEntity saved::', [setTokenEntity.name])
 
 }
+/**
+ * type TokenRedemption @entity {
+  id: ID!
+  setToken: SetToken!  @derivedFrom(field: "redemptions")
+  redeemer: Bytes!
+  transaction: Transaction!
+  quantity: BigInt!
+  fee: Fee!
+}
+ */
 
+const createRedemption = (id: string, redeemer: Bytes, quantity: BigInt, feeId: string, transaction: string): TokenRedemption => {
+  let entity = new TokenRedemption(id)
+  entity.redeemer = redeemer;
+  entity.quantity = quantity;
+  entity.fee = feeId
+  entity.transaction = transaction;
+  return entity
+}
 export function handleSetTokenRedeemed(event: SetTokenRedeemedEvent): void {
-  let entity = new SetTokenRedeemed(
-    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
-  );
-  entity._setToken = event.params._setToken;
-  entity._redeemer = event.params._redeemer;
-  entity._to = event.params._to;
-  entity._quantity = event.params._quantity;
-  entity._managerFee = event.params._managerFee;
-  entity._protocolFee = event.params._protocolFee;
+  let redeemFee = createFee(createGenericId(event), event.block.timestamp, event.params._managerFee, event.params._protocolFee)
+  redeemFee.save()
+
+  const txn = createTxn(createGenericId(event),
+    event.block.timestamp, event.params._redeemer, event.params._to, event.transaction.gasLimit, event.transaction.gasPrice)
+
+  txn.save()
+
+  let entity = createRedemption(createGenericId(event), event.params._redeemer, event.params._quantity, redeemFee.id,
+    txn.id
+  )
   entity.save();
 }

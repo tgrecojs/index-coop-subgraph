@@ -37,7 +37,7 @@ dataSources:
         - event: MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)
           handler: handleMethodologySettingsUpdated
         - event: RebalanceIterated(uint256,uint256,uint256,uint256)
-          handler: handleRebalanceEvent
+          handler: handleRebalanceIteratedEvent
         - event: Rebalanced(uint256,uint256,uint256,uint256)
           handler: handleRebalanceEvent
         - event: RipcordCalled(uint256,uint256,uint256,uint256)
@@ -84,7 +84,7 @@ dataSources:
         - event: MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)
           handler: handleMethodologySettingsUpdated
         - event: RebalanceIterated(uint256,uint256,uint256,uint256)
-          handler: handleRebalanceEvent
+          handler: handleRebalanceIteratedEvent
         - event: Rebalanced(uint256,uint256,uint256,uint256)
           handler: handleRebalanceEvent
         - event: RipcordCalled(uint256,uint256,uint256,uint256)
