@@ -107,7 +107,7 @@ type Manager @entity {
 
 type TokenRedemption @entity {
   id: ID!
-  setToken: SetToken!  @derivedFrom(field: "redemptions")
+  setToken: SetToken! @derivedFrom(field: "redemptions")
   redeemer: Bytes!
   transaction: Transaction!
   quantity: BigInt!
