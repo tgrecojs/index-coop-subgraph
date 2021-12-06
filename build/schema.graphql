@@ -28,34 +28,36 @@ type Transfer @entity {
   timestamp: BigInt!
 }
 
-type FeeRecipientUpdated @entity {
-  id: ID!
-  _setToken: Bytes! # address
-  _newFeeRecipient: Bytes! # address
-}
+# type FeeRecipientUpdated @entity {
+#   id: ID!
+#   _setToken: Bytes! # address
+#   _newFeeRecipient: Bytes! # address
+# }
 
-type IssueFeeUpdated @entity {
-  id: ID!
-  _setToken: Bytes! # address
-  _newIssueFee: BigInt! # uint256
-}
+# type IssueFeeUpdated @entity {
+#   id: ID!
+#   _setToken: Bytes! # address
+#   _newIssueFee: BigInt! # uint256
+# }
 
-type RedeemFeeUpdated @entity {
-  id: ID!
-  _setToken: Bytes! # address
-  _newRedeemFee: BigInt! # uint256
-}
+# type RedeemFeeUpdated @entity {
+#   id: ID!
+#   _setToken: Bytes! # address
+#   _newRedeemFee: BigInt! # uint256
+# }
 
 type Issuer @entity {
   id: ID!
   address: Bytes!
   setTokensIssued: [TokenIssuance!]!
 }
+
 type TokenIssuance @entity {
   id: ID!
   buyerAddress: Bytes!
-  setToken: SetToken! @derivedFrom(field: "issuances")
+  setToken: SetToken!
   quantity: BigInt!
+  fee: Fee!
   issuer: Issuer!
   transaction: Transaction!
 }
@@ -81,7 +83,7 @@ type Fee @entity {
   transaction: Transaction!
 }
 
-type RebalanceDetails @entity {
+type FlIRebalanceDetails @entity {
   id: ID!
   currentLeverageRatio: BigInt! # uint256
   newLeverageRatio: BigInt! # uint256
@@ -89,10 +91,15 @@ type RebalanceDetails @entity {
   totalRebalanceNotional: BigInt! # uint256
 }
 
+type IndexTokenRebalance @entity {
+  
+}
+
 type Rebalance @entity {
   id: ID!
   setToken: SetToken! @derivedFrom(field: "rebalances")
-  rebalanceDetails: RebalanceDetails!
+  rebalanceDetails: RebalanceDetails
+  generalIndexTokenRebalanceDetails: 
   transaction: Transaction!
   transactionHash: Bytes!
 }
@@ -107,93 +114,12 @@ type Manager @entity {
 
 type TokenRedemption @entity {
   id: ID!
-  setToken: SetToken! @derivedFrom(field: "redemptions")
+  setToken: SetToken!
   redeemer: Bytes!
   transaction: Transaction!
   quantity: BigInt!
   fee: Fee!
 }
-type SetTokenRedeemed @entity {
-  id: ID!
-  _setToken: Bytes! # address
-  _redeemer: Bytes! # address
-  _to: Bytes! # address
-  transaction: Transaction!
-  _managerFee: BigInt! # uint256
-  _protocolFee: BigInt! # uint256
-}
-
-type Disengaged @entity {
-  id: ID!
-  timestamp: BigInt!
-  currentLeverageRatio: BigInt! # uint256
-  newLeverageRatio: BigInt! # uint25
-  chunkRebalanceNotional: BigInt! # uint256
-  totalRebalanceNotional: BigInt! # uint256
-}
-
-type Engaged @entity {
-  id: ID!
-  timestamp: BigInt!
-  currentLeverageRatio: BigInt! # uint256
-  newLeverageRatio: BigInt! # uint256
-  chunkRebalanceNotional: BigInt! # uint256
-  totalRebalanceNotional: BigInt! # uint256
-}
-
-type ExchangeAdded @entity {
-  id: ID!
-  _exchangeName: String! # string
-  twapMaxTradeSize: BigInt! # uint256
-  exchangeLastTradeTimestamp: BigInt! # uint256
-  incentivizedTwapMaxTradeSize: BigInt! # uint256
-  leverExchangeData: Bytes! # bytes
-  deleverExchangeData: Bytes! # bytes
-}
-
-type ExchangeRemoved @entity {
-  id: ID!
-  _exchangeName: String! # string
-}
-
-type ExchangeUpdated @entity {
-  id: ID!
-  _exchangeName: String! # string
-  twapMaxTradeSize: BigInt! # uint256
-  exchangeLastTradeTimestamp: BigInt! # uint256
-  incentivizedTwapMaxTradeSize: BigInt! # uint256
-  leverExchangeData: Bytes! # bytes
-  deleverExchangeData: Bytes! # bytes
-}
-
-type ExecutionSettingsUpdated @entity {
-  id: ID!
-  _unutilizedLeveragePercentage: BigInt! # uint256
-  _twapMaxTradeSize: BigInt! # uint256
-  _twapCooldownPeriod: BigInt! # uint256
-  _slippageTolerance: BigInt! # uint256
-  _exchangeName: String! # string
-  _exchangeData: Bytes! # bytes
-}
-
-type IncentiveSettingsUpdated @entity {
-  id: ID!
-  _etherReward: BigInt! # uint256
-  _incentivizedLeverageRatio: BigInt! # uint256
-  _incentivizedSlippageTolerance: BigInt! # uint256
-  _incentivizedTwapCooldownPeriod: BigInt! # uint256
-  _incentivizedTwapMaxTradeSize: BigInt! # uint256
-}
-
-type MethodologySettingsUpdated @entity {
-  id: ID!
-  _targetLeverageRatio: BigInt! # uint256
-  _minLeverageRatio: BigInt! # uint25
-  _maxLeverageRatio: BigInt! # uint256
-  _recenteringSpeed: BigInt! # uint256
-  _rebalanceInterval: BigInt! # uint256
-}
-
 
 type RipcordCalled @entity {
   id: ID!

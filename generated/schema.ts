@@ -562,6 +562,7 @@ export class TokenIssuance extends Entity {
     this.set("id", Value.fromString(id));
 
     this.set("buyerAddress", Value.fromBytes(Bytes.empty()));
+    this.set("setToken", Value.fromString(""));
     this.set("quantity", Value.fromBigInt(BigInt.zero()));
     this.set("issuer", Value.fromString(""));
     this.set("transaction", Value.fromString(""));
@@ -1082,6 +1083,7 @@ export class TokenRedemption extends Entity {
     super();
     this.set("id", Value.fromString(id));
 
+    this.set("setToken", Value.fromString(""));
     this.set("redeemer", Value.fromBytes(Bytes.empty()));
     this.set("transaction", Value.fromString(""));
     this.set("quantity", Value.fromBigInt(BigInt.zero()));

@@ -45,27 +45,33 @@ type RedeemFeeUpdated @entity {
   _setToken: Bytes! # address
   _newRedeemFee: BigInt! # uint256
 }
-
+# Might be unneccesary to grab
+# Issuer is the person the token is being issued to.
 type Issuer @entity {
   id: ID!
   address: Bytes!
   setTokensIssued: [TokenIssuance!]!
 }
+
+# 
 type TokenIssuance @entity {
   id: ID!
+  # buyerAddress is the Issuer
   buyerAddress: Bytes!
-  setToken: SetToken! @derivedFrom(field: "issuances")
+  setToken: SetToken!
   quantity: BigInt!
   issuer: Issuer!
   transaction: Transaction!
+  fee: Fee!
 }
 
+# SetTokenCreator is the contract where we should be populating this entity (or being populating)
 type SetToken @entity {
   id: ID!
   address: Bytes!
   name: String!
   manager: Manager!
-  issuer: Issuer!
+  # fees: [Fee!]! 
   issuances: [TokenIssuance!]! @derivedFrom(field: "setToken")
   totalSupply: BigInt!
   rebalances: [Rebalance!]! @derivedFrom(field: "setToken")
@@ -107,7 +113,7 @@ type Manager @entity {
 
 type TokenRedemption @entity {
   id: ID!
-  setToken: SetToken! @derivedFrom(field: "redemptions")
+  setToken: SetToken!
   redeemer: Bytes!
   transaction: Transaction!
   quantity: BigInt!

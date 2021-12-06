@@ -69,7 +69,9 @@ export const createManager = (id: string, address: Address): Manager => {
   return manager
 }
 
-const updateManager = (id: string, address: Address,
+const updateManager = (
+  id: string,
+  address: Address,
   fee: Fee): Manager => {
   let manager = Manager.load(id)
   return manager as Manager
@@ -91,13 +93,18 @@ const createIssuance = (id: string, buyerAddress: Bytes, quantity: BigInt): Toke
  */
 
 // Update this to include additional info
-const createTxn = (id: string, timestamp: BigInt, from: Bytes
-  , to: Bytes, gasLimit: BigInt, gasPrice: BigInt): Transaction => {
+const createTxn = (
+  id: string,
+  timestamp: BigInt,
+  from: Bytes,
+  to: Bytes,
+  gasLimit: BigInt,
+  gasPrice: BigInt
+): Transaction => {
   let txnObject = new Transaction(id)
   txnObject.from = from
   txnObject.to = to
   txnObject.timestamp = timestamp;
-
   txnObject.gasLimit = gasLimit;
   txnObject.gasPriceInGwei = gasPrice;
   return txnObject
@@ -131,9 +138,9 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
 
   issuanceEntity.save();
 
+  let currentSetTokenContract = bindTokenAddress(setTokenAddress)
 
-
-  let currentManager = Manager.load(fetchManager(setTokenAddress))
+  let currentManager = Manager.load(currentSetTokenContract.manager.toString())
 
   if (currentManager == null) {
     currentManager = createManager(fetchManager(setTokenAddress), setTokenAddress)
@@ -145,21 +152,17 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   feeEntity.manager = currentManager.id;
   feeEntity.save()
 
-  let issuerEntity = Issuer.load(id.toHexString())
-  if (issuerEntity == null) {
-    issuerEntity = createIssuer(event.params._issuer)
+
+  const setTokenExampleContract = {
+    name: 'eth2x fli',
+    manager: '0x222222',
+    try_manager: () => this.manager
   }
-
-  issuerEntity.save()
-
-  log.debug('issuerEntity saved::', [issuerEntity.id])
-
-
   let setTokenEntity = SetToken.load(setTokenAddress.toHexString())
   if (setTokenEntity == null) {
     setTokenEntity = new SetToken(setTokenAddress.toHexString())
     setTokenEntity.address = setTokenAddress
-    setTokenEntity.name = bindTokenAddress(setTokenAddress).name()
+    setTokenEntity.name = currentSetTokenContract.name()
     // NESTED ENTITY --> set using entity.id
     setTokenEntity.manager = currentManager.id
     // NESTED ENTITY --> set using entity.id
