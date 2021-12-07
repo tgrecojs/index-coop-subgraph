@@ -566,6 +566,7 @@ export class TokenIssuance extends Entity {
     this.set("quantity", Value.fromBigInt(BigInt.zero()));
     this.set("issuer", Value.fromString(""));
     this.set("transaction", Value.fromString(""));
+    this.set("fee", Value.fromString(""));
   }
 
   save(): void {
@@ -638,6 +639,15 @@ export class TokenIssuance extends Entity {
   set transaction(value: string) {
     this.set("transaction", Value.fromString(value));
   }
+
+  get fee(): string {
+    let value = this.get("fee");
+    return value!.toString();
+  }
+
+  set fee(value: string) {
+    this.set("fee", Value.fromString(value));
+  }
 }
 
 export class SetToken extends Entity {
@@ -648,7 +658,6 @@ export class SetToken extends Entity {
     this.set("address", Value.fromBytes(Bytes.empty()));
     this.set("name", Value.fromString(""));
     this.set("manager", Value.fromString(""));
-    this.set("issuer", Value.fromString(""));
     this.set("totalSupply", Value.fromBigInt(BigInt.zero()));
   }
 
@@ -703,15 +712,6 @@ export class SetToken extends Entity {
 
   set manager(value: string) {
     this.set("manager", Value.fromString(value));
-  }
-
-  get issuer(): string {
-    let value = this.get("issuer");
-    return value!.toString();
-  }
-
-  set issuer(value: string) {
-    this.set("issuer", Value.fromString(value));
   }
 
   get issuances(): Array<string> {
