@@ -152,12 +152,6 @@ export function handleSetTokenIssued(event: SetTokenIssuedEvent): void {
   feeEntity.manager = currentManager.id;
   feeEntity.save()
 
-
-  const setTokenExampleContract = {
-    name: 'eth2x fli',
-    manager: '0x222222',
-    try_manager: () => this.manager
-  }
   let setTokenEntity = SetToken.load(setTokenAddress.toHexString())
   if (setTokenEntity == null) {
     setTokenEntity = new SetToken(setTokenAddress.toHexString())
