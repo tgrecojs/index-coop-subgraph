@@ -11,6 +11,8 @@ type CallerStatusUpdated @entity {
 
 type Transaction @entity {
   id: ID!
+  from: Bytes
+  to: Bytes
   timestamp: BigInt!
   gasLimit: BigInt
   gasPriceInGwei: BigInt
@@ -43,64 +45,86 @@ type RedeemFeeUpdated @entity {
   _setToken: Bytes! # address
   _newRedeemFee: BigInt! # uint256
 }
-
+# Might be unneccesary to grab
+# Issuer is the person the token is being issued to.
 type Issuer @entity {
   id: ID!
   address: Bytes!
   setTokensIssued: [TokenIssuance!]!
 }
+
+# 
 type TokenIssuance @entity {
   id: ID!
+  # buyerAddress is the Issuer
   buyerAddress: Bytes!
   setToken: SetToken!
   quantity: BigInt!
+  issuer: Issuer!
   transaction: Transaction!
+  fee: Fee!
 }
 
+# SetTokenCreator is the contract where we should be populating this entity (or being populating)
 type SetToken @entity {
   id: ID!
   address: Bytes!
   name: String!
   manager: Manager!
-  issuer: Issuer!
-  issuances: [TokenIssuance!]!
+  # fees: [Fee!]! 
+  issuances: [TokenIssuance!]! @derivedFrom(field: "setToken")
   totalSupply: BigInt!
+  rebalances: [Rebalance!]! @derivedFrom(field: "setToken")
+  redemptions: [TokenRedemption!]! @derivedFrom(field: "setToken")
 }
 
 type Fee @entity {
   id: ID!
   timestamp: BigInt!
-  manager: Manager! 
+  manager: Manager!
   managerPayout: BigInt
   protocolPayout: BigInt
   transaction: Transaction!
 }
 
+type RebalanceDetails @entity {
+  id: ID!
+  currentLeverageRatio: BigInt! # uint256
+  newLeverageRatio: BigInt! # uint256
+  chunkRebalanceNotional: BigInt! # uint256
+  totalRebalanceNotional: BigInt! # uint256
+}
+
+type Rebalance @entity {
+  id: ID!
+  setToken: SetToken! @derivedFrom(field: "rebalances")
+  rebalanceDetails: RebalanceDetails!
+  transaction: Transaction!
+  transactionHash: Bytes!
+}
+
 type Manager @entity {
   id: ID!
   address: Bytes!
-  feeAccrualHistory: [Fee!]!
+  feeAccrualHistory: [Fee!]! @derivedFrom(field: "manager")
   totalFees: BigInt
   setToken: SetToken!
 }
 
-type SetTokenIssued @entity {
+type TokenRedemption @entity {
   id: ID!
-  setToken: SetToken! # address
-  issuer: Issuer! # address
-  purchaser: Bytes! # address
-  _hookContract: Bytes! # address
-  quantity: BigInt! # uint256
-  manager: Manager!
-  protocolFee: BigInt! # uint256
+  setToken: SetToken!
+  redeemer: Bytes!
+  transaction: Transaction!
+  quantity: BigInt!
+  fee: Fee!
 }
-
 type SetTokenRedeemed @entity {
   id: ID!
   _setToken: Bytes! # address
   _redeemer: Bytes! # address
   _to: Bytes! # address
-  _quantity: BigInt! # uint256
+  transaction: Transaction!
   _managerFee: BigInt! # uint256
   _protocolFee: BigInt! # uint256
 }
@@ -109,7 +133,7 @@ type Disengaged @entity {
   id: ID!
   timestamp: BigInt!
   currentLeverageRatio: BigInt! # uint256
-  newLeverageRatio: BigInt! # uint256
+  newLeverageRatio: BigInt! # uint25
   chunkRebalanceNotional: BigInt! # uint256
   totalRebalanceNotional: BigInt! # uint256
 }
@@ -176,24 +200,6 @@ type MethodologySettingsUpdated @entity {
   _rebalanceInterval: BigInt! # uint256
 }
 
-type RebalanceIterated @entity {
-  id: ID!
-  timestamp: BigInt!
-  currentLeverageRatio: BigInt! # uint256
-  newLeverageRatio: BigInt! # uint256
-  chunkRebalanceNotional: BigInt! # uint256
-  totalRebalanceNotional: BigInt! # uint256
-}
-
-type Rebalance @entity {
-  id: ID!
-  currentLeverageRatio: BigInt! # uint256
-  newLeverageRatio: BigInt! # uint256
-  chunkRebalanceNotional: BigInt! # uint256
-  totalRebalanceNotional: BigInt! # uint256
-  transaction: Transaction!
-  transactionHash: Bytes!
-}
 
 type RipcordCalled @entity {
   id: ID!

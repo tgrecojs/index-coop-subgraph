@@ -37,7 +37,7 @@ dataSources:
         - event: MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)
           handler: handleMethodologySettingsUpdated
         - event: RebalanceIterated(uint256,uint256,uint256,uint256)
-          handler: handleRebalanceEvent
+          handler: handleRebalanceIteratedEvent
         - event: Rebalanced(uint256,uint256,uint256,uint256)
           handler: handleRebalanceEvent
         - event: RipcordCalled(uint256,uint256,uint256,uint256)
@@ -84,32 +84,32 @@ dataSources:
         - event: 'MethodologySettingsUpdated(uint256,uint256,uint256,uint256,uint256)'
           handler: handleMethodologySettingsUpdated
         - event: 'RebalanceIterated(uint256,uint256,uint256,uint256)'
-          handler: handleRebalanceEvent
+          handler: handleRebalanceIteratedEvent
         - event: 'Rebalanced(uint256,uint256,uint256,uint256)'
           handler: handleRebalanceEvent
         - event: 'RipcordCalled(uint256,uint256,uint256,uint256)'
           handler: handleRipcordCalled
       file: ./src/mappings/setTokenEvents.ts
-  - kind: ethereum/contract
-    network: mainnet
-    name: SetToken
-    source:
-      address: '0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd'
-      abi: SetToken
-      startBlock: 12035541
-    mapping:
-      kind: ethereum/events
-      language: wasm/assemblyscript
-      apiVersion: 0.0.5
-      abis:
-        - name: SetToken
-          file: ./abis/SetToken.json
-      entities:
-        - Transfer
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-      file: ./src/mappings/setTokenEvents.ts
+  # - kind: ethereum/contract
+  #   network: mainnet
+  #   name: SetToken
+  #   source:
+  #     address: '0xaa6e8127831c9de45ae56bb1b0d4d4da6e5665bd'
+  #     abi: SetToken
+  #     startBlock: 12035541
+  #   mapping:
+  #     kind: ethereum/events
+  #     language: wasm/assemblyscript
+  #     apiVersion: 0.0.5
+  #     abis:
+  #       - name: SetToken
+  #         file: ./abis/SetToken.json
+  #     entities:
+  #       - Transfer
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,uint256)
+  #         handler: handleTransfer
+  #     file: ./src/mappings/setTokenEvents.ts
   - kind: ethereum/contract
     name: DebtIssuanceModule
     network: mainnet

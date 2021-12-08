@@ -19,6 +19,11 @@ export let contracts: ICTokenContracts[] = [
     issuanceAddress: '0xd8EF3cACe8b4907117a45B0b125c68560532F94D',
     streamingFeeAbi: './abis/StreamingFeeModule.json',
     streamingFeeAddress: '0x08f866c74205617B6F3903EF481798EcED10cDEC',
+    rebalanceContractAddress: [{
+      value: '0x084848848483',
+      startBlock: 12000122,
+      eventHandlers : ['handleSomeEvent', 'handleSomePreviousEventThatNoLongerFires']
+    }]
   },
   {
     name: 'ETH2xFLI Contract',
